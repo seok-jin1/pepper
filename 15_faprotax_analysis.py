@@ -60,6 +60,25 @@ PLANT_RELEVANT = [
     'methylotrophy',
 ]
 
+# N cycle functions for detailed subplot
+N_CYCLE_FUNCTIONS = [
+    'nitrification',
+    'aerobic_ammonia_oxidation',
+    'aerobic_nitrite_oxidation',
+    'denitrification',
+    'nitrogen_fixation',
+    'nitrate_reduction',
+]
+
+# Control functions (stable reference) for contrast
+CONTROL_FUNCTIONS = [
+    'aerobic_chemoheterotrophy',
+    'fermentation',
+    'aromatic_compound_degradation',
+    'cellulolysis',
+    'chitinolysis',
+]
+
 
 # ─────────────────────────────────────────────
 # 1. Prepare BIOM-style input for collapse_table.py
@@ -220,6 +239,110 @@ def plot_key_functions(key_df):
     print(f'    Saved: {pdf_path.name}')
 
 
+def plot_ncycle_detail(result):
+    """Two-panel figure: N cycle functions (left) + control functions (right)."""
+    ncycle  = [f for f in N_CYCLE_FUNCTIONS  if f in result.index]
+    control = [f for f in CONTROL_FUNCTIONS  if f in result.index]
+    if not ncycle:
+        print('  No N cycle functions found — skipping detail plot.')
+        return
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, max(5, max(len(ncycle), len(control)) * 0.65)))
+
+    for ax, funcs, title in zip(
+        axes,
+        [ncycle, control],
+        ['Nitrogen Cycling Functions', 'Reference Functions'],
+    ):
+        if not funcs:
+            ax.set_visible(False)
+            continue
+        df   = result.loc[funcs]
+        labels = [f.replace('_', ' ').title() for f in funcs]
+        x    = np.arange(len(labels))
+        w    = 0.38
+
+        ax.barh(x + w/2, df['Space_Flight_mean'].values,  w, color='#2980b9', label='Space Flight')
+        ax.barh(x - w/2, df['Terrestrial_Soil_mean'].values, w, color='#27ae60', label='Terrestrial Soil')
+        ax.set_yticks(x)
+        ax.set_yticklabels(labels, fontsize=10)
+        ax.set_xlabel('Mean Relative Abundance (%)', fontsize=10)
+        ax.set_title(title, fontsize=11, fontweight='bold')
+        ax.invert_yaxis()
+        ax.legend(fontsize=9)
+
+    fig.suptitle('FAPROTAX Functional Trait Comparison\nSpace Flight vs. Terrestrial Soil',
+                 fontsize=13, fontweight='bold', y=1.01)
+    plt.tight_layout()
+
+    png_path = OUTPUT_DIR / 'Main_Fig_FAPROTAX_Ncycle.png'
+    pdf_path = OUTPUT_DIR / 'Main_Fig_FAPROTAX_Ncycle.pdf'
+    plt.savefig(png_path, dpi=300, bbox_inches='tight')
+    plt.savefig(pdf_path, bbox_inches='tight')
+    plt.close()
+    print(f'    Saved: {png_path.name}')
+    print(f'    Saved: {pdf_path.name}')
+
+
+def plot_log2fc(result):
+    """Horizontal log2FC barplot for N cycle + control functions."""
+    funcs = [f for f in N_CYCLE_FUNCTIONS + CONTROL_FUNCTIONS if f in result.index]
+    if not funcs:
+        print('  No functions for log2FC plot.')
+        return
+
+    df = result.loc[funcs, 'Log2FC'].sort_values()
+    labels = [f.replace('_', ' ').title() for f in df.index]
+    colors = ['#c0392b' if v < 0 else '#2980b9' for v in df.values]
+
+    # Mark N cycle vs control with linestyle
+    is_ncycle = [f in N_CYCLE_FUNCTIONS for f in df.index]
+
+    fig, ax = plt.subplots(figsize=(9, max(5, len(df) * 0.55)))
+    bars = ax.barh(range(len(df)), df.values, color=colors, edgecolor='white', height=0.65)
+
+    # Bold N cycle labels
+    ax.set_yticks(range(len(df)))
+    ticklabels = ax.set_yticklabels(labels, fontsize=10)
+    for lbl, nc in zip(ticklabels, is_ncycle):
+        if nc:
+            lbl.set_fontweight('bold')
+
+    ax.axvline(0, color='black', linewidth=0.8)
+    ax.set_xlabel('Log₂ Fold Change (Space Flight / Terrestrial Soil)', fontsize=11)
+    ax.set_title(
+        'FAPROTAX Functional Trait Log₂FC\nSpace Flight vs. Terrestrial Soil',
+        fontsize=13, fontweight='bold'
+    )
+
+    # Annotate values
+    for i, v in enumerate(df.values):
+        ax.text(v + (0.15 if v >= 0 else -0.15), i, f'{v:+.1f}',
+                va='center', ha='left' if v >= 0 else 'right', fontsize=8.5)
+
+    # Legend
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Patch(facecolor='#2980b9', label='Space-enriched'),
+        Patch(facecolor='#c0392b', label='Space-depleted'),
+    ]
+    ax.legend(handles=legend_elements, fontsize=9, loc='lower right')
+
+    # Annotation: N cycle = bold
+    ax.text(0.01, 0.99, '★ Bold = N cycle function', transform=ax.transAxes,
+            fontsize=8, va='top', color='#555555')
+
+    plt.tight_layout()
+
+    png_path = OUTPUT_DIR / 'Main_Fig_FAPROTAX_Log2FC.png'
+    pdf_path = OUTPUT_DIR / 'Main_Fig_FAPROTAX_Log2FC.pdf'
+    plt.savefig(png_path, dpi=300, bbox_inches='tight')
+    plt.savefig(pdf_path, bbox_inches='tight')
+    plt.close()
+    print(f'    Saved: {png_path.name}')
+    print(f'    Saved: {pdf_path.name}')
+
+
 # ─────────────────────────────────────────────
 # Main
 # ─────────────────────────────────────────────
@@ -245,5 +368,7 @@ if __name__ == '__main__':
 
     print('\n[5] Plotting...')
     plot_key_functions(key_df)
+    plot_ncycle_detail(result)
+    plot_log2fc(result)
 
     print('\nDone.')
