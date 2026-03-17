@@ -329,11 +329,6 @@ This work was supported by the Google Cloud Research Credits program (award GCP4
 
 ---
 
-## Citation
-
-Kang S-J, Shin H (2026) Can rhizosphere microbiomes support plants in space? Microbiomic evidence for functional network collapse in ISS-grown *Capsicum annuum*. *Plant Physiology* (pre-proof).
-
----
 
 ## Contact
 
