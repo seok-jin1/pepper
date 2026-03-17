@@ -149,8 +149,8 @@ def plot_taxa_bar():
         plt.legend(title='Phylum', bbox_to_anchor=(1.01, 1), loc='upper left')
         
         plt.tight_layout()
-        plt.savefig('version-2_integrated/S_Fig4_Taxa_Barplot.png')
-        plt.savefig('version-2_integrated/S_Fig4_Taxa_Barplot.pdf')
+        plt.savefig('version-2_integrated/Main_Fig1B_Taxa_Barplot.png')
+        plt.savefig('version-2_integrated/Main_Fig1B_Taxa_Barplot.pdf')
         import os; os.makedirs('manuscript_figures', exist_ok=True)
         plt.savefig('manuscript_figures/Fig1B_Taxa_Barplot.pdf')
         plt.close()
