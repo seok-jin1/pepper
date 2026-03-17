@@ -139,17 +139,14 @@ done < external_list.txt
 
 ### Step 1: Prepare ISS Data (OSD-772)
 
-Download raw paired-end FASTQ files from [NASA OSDR OSD-772](https://osdr.nasa.gov/bio/repo/data/studies/OSD-772).
-Then create two text files listing absolute paths:
+Download raw paired-end FASTQ files from [NASA OSDR OSD-772](https://osdr.nasa.gov/bio/repo/data/studies/OSD-772) into `external_data/OSD-772/`:
 
 ```
-osd_r1_list.txt  — one R1 FASTQ path per line  (expected: 109 entries)
-osd_r2_list.txt  — corresponding R2 FASTQ paths (same order, 109 entries)
+external_data/OSD-772/GLDS-675_GAmplicon_<sample-id>_R1_raw.fastq.gz  (109 files)
+external_data/OSD-772/GLDS-675_GAmplicon_<sample-id>_R2_raw.fastq.gz  (109 files)
 ```
 
-File naming pattern: `GLDS-675_GAmplicon_<sample-id>_R1_raw.fastq.gz`
-
-The complete list of expected sample IDs and filenames is provided in `osd_r1_list.txt.example` and `osd_r2_list.txt.example`. Copy either file, replace `/your/download/path/` with your actual directory, and save as `osd_r1_list.txt` / `osd_r2_list.txt`.
+`osd_r1_list.txt` and `osd_r2_list.txt` are pre-configured for this path and included in the repository — no manual editing required.
 
 Also create `external_list.txt` with SRR accession IDs for PRJNA1145089:
 ```
