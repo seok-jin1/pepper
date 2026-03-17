@@ -86,28 +86,6 @@ All Python analysis scripts (06–14) use the `qiime2-amplicon` environment unle
 
 ---
 
-## Quick Start — Analysis Reproduction (without re-running QIIME2)
-
-The processed intermediate files (post-QIIME2 TSV exports, ~17 MB) are
-deposited on Zenodo and can be used to reproduce all figures directly.
-
-```bash
-conda activate qiime2-amplicon
-python download_processed_data.py   # downloads & verifies version-2_integrated/
-python config.py                    # confirms all required files are present
-python 06_plot_depth.py             # → Supp Fig 5
-python 07_supp_figures.py           # → Fig 1B + QC figures
-python 08_picrust2_analysis.py      # → Fig 1C
-python 09_taxon_function_corr.py    # → Fig 1D
-python 10_network_analysis.py       # → Fig 1E + keystone table
-python 13_supp_faith_pd.py          # → Supp Fig S1
-python 14_supp_temporal.py          # → Supp Fig S2
-```
-
-> **Zenodo DOI:** https://doi.org/10.5281/zenodo.XXXXXXX *(update before publication)*
-> File integrity: `md5sum -c processed_data.md5`
-
----
 
 ## Full Pipeline — End-to-End Reproduction
 
