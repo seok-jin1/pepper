@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 import config
 
 OUTPUT_DIR  = config.VERSION_DIR
-ANCOMBC_DIR = OUTPUT_DIR / 'ancombc_out' / 'ancombc-exported'
+ANCOMBC_DIR = OUTPUT_DIR / 'ancombc_out' / 'ancombc-genus-exported'
 
 # ─────────────────────────────────────────────
 # Load taxonomy for labeling
@@ -73,15 +73,9 @@ def load_ancombc():
 # ─────────────────────────────────────────────
 
 def plot_ancombc(df, tax):
-    # Add genus labels
     df = df.copy()
-    if 'id' in df.columns:
-        df.index = df['id']
-
-    # Merge taxonomy
-    df['genus'] = tax.reindex(df.index)['Taxon'].apply(
-        lambda x: get_genus(x) if pd.notna(x) else df.index[df.index == x][0][:8]
-    ) if 'Taxon' in tax.columns else df.index.map(lambda x: x[:12])
+    # Index is already genus name after genus-level collapse
+    df['genus'] = df.index.astype(str)
 
     # Identify column names (QIIME2 uses Study_Group[T.Terrestrial_Soil] style)
     # load_ancombc() already provides 'lfc', 'qval', 'sig' columns
