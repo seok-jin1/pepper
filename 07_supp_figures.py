@@ -34,7 +34,7 @@ def plot_denoising_stats():
         plt.legend()
         
         plt.tight_layout()
-        plt.savefig('version-2_integrated/S_Fig1_Denoising_Stats.png')
+        plt.savefig('version-2_integrated/Denoising_Stats.png')
         plt.close()
         print("Done.")
     except Exception as e:
@@ -81,7 +81,7 @@ def plot_plant_contamination():
         plt.legend(title='Category', loc='upper left', bbox_to_anchor=(1, 1))
         
         plt.tight_layout()
-        plt.savefig('version-2_integrated/S_Fig3_Plant_DNA_Contamination.png')
+        plt.savefig('version-2_integrated/Plant_DNA_Contamination.png')
         plt.close()
         print("Done.")
 
