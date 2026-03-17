@@ -18,7 +18,7 @@
 set -euo pipefail
 
 WORKDIR="version-2_integrated"
-CLASSIFIER="classifiers/silva-138-99-classifier-515-806.qza"  # Trained TaxonomicClassifier (see README.md Step 3)
+CLASSIFIER="classifiers/silva-138-99-classifier.qza"  # Trained TaxonomicClassifier (see README.md Step 3)
 
 mkdir -p "${WORKDIR}"
 

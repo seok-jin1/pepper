@@ -183,18 +183,18 @@ conda activate qiime2-amplicon
 
 # Download SILVA 138 V3-V4 reference sequences and taxonomy (one-time):
 mkdir -p classifiers
-wget "https://data.qiime2.org/2023.9/common/silva-138-99-seqs-515-806.qza" \
-  -O classifiers/silva-138-99-seqs-515-806.qza
-wget "https://data.qiime2.org/2023.9/common/silva-138-99-taxonomy.qza" \
-  -O classifiers/silva-138-99-taxonomy.qza
+wget "https://data.qiime2.org/2024.5/common/silva-138-99-seqs.qza" \
+  -O classifiers/silva-138-99-seqs.qza
+wget "https://data.qiime2.org/2024.5/common/silva-138-99-tax.qza" \
+  -O classifiers/silva-138-99-tax.qza
 
 # Train the Naive Bayes classifier (one-time, ~1 hr, ~16 GB RAM):
 # qiime feature-classifier classify-sklearn requires a TaxonomicClassifier artifact,
 # not the raw sequence file above. This step produces it.
 qiime feature-classifier fit-classifier-naive-bayes \
-  --i-reference-reads  classifiers/silva-138-99-seqs-515-806.qza \
-  --i-reference-taxonomy classifiers/silva-138-99-taxonomy.qza \
-  --o-classifier classifiers/silva-138-99-classifier-515-806.qza
+  --i-reference-reads  classifiers/silva-138-99-seqs.qza \
+  --i-reference-taxonomy classifiers/silva-138-99-tax.qza \
+  --o-classifier classifiers/silva-138-99-classifier.qza
 
 # Run the full pipeline:
 bash 05_qiime2_pipeline.sh

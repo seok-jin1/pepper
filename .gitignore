@@ -2,6 +2,9 @@
 # ISS Chile Pepper Microbiome - .gitignore
 # ==========================================
 
+# Manuscript PDF
+PLPHYS-S-26-00532 (2).pdf
+
 # Raw sequencing data (download via 00_download_data.py)
 external_data/
 *.fastq.gz
