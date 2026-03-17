@@ -307,6 +307,8 @@ python 12_identify_asvs.py        # Identify top 5 dominant space ASVs (supports
 | **Supp Fig S2** | `14_supp_temporal.py` | `exported_diversity/` (all) |
 | QC only | `07_supp_figures.py` | `exported_table_raw/`, `exported_denoising_stats/` |
 | QC only | `06_plot_depth.py` | `table_summary_stats/sample-frequency-detail.html` |
+| Exploratory only | `11_pathogen_screening.py` | `exported_table_clean/`, `exported_taxonomy/` |
+| Exploratory only | `12_identify_asvs.py` | `exported_table_space/`, `exported_taxonomy/`, `exported_sequences/` |
 
 ---
 
