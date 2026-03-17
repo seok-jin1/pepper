@@ -216,7 +216,7 @@ def plot_networks(G_space, G_terr, top_genera):
     plt.tight_layout(rect=[0, 0.05, 1, 1])
 
     png_path = OUTPUT_DIR / f'Network_Genus_Top{TOP_N}_Spearman.png'
-    pdf_path = OUTPUT_DIR / f'Network_Genus_Top{TOP_N}_Spearman.pdf'
+    pdf_path = OUTPUT_DIR / 'Main_Fig1E_Network.pdf'
     plt.savefig(png_path, dpi=300, bbox_inches='tight')
     plt.savefig(pdf_path, bbox_inches='tight')
     plt.close()
