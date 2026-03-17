@@ -58,6 +58,9 @@ SESSION_INFO.txt
 # Zenodo upload archive (not for git)
 *.tar.gz
 
+# FAPROTAX installer (download separately)
+FAPROTAX_*.zip
+
 # IDE
 .vscode/
 .idea/

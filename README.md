@@ -295,6 +295,56 @@ python 12_identify_asvs.py        # Identify top 5 dominant space ASVs (supports
 
 ---
 
+### Step 11: FAPROTAX Functional Trait Analysis
+
+Literature-validated functional trait assignment using FAPROTAX 1.2.12 (Louca et al. 2016).
+
+**Install FAPROTAX** (one-time):
+```bash
+# Download FAPROTAX_1.2.12.zip from https://pages.uoregon.edu/slouca/LoucaLab/archive/FAPROTAX/
+unzip FAPROTAX_1.2.12.zip -d /path/to/faprotax/
+```
+
+**Run analysis:**
+```bash
+conda activate qiime2-amplicon
+python 15_faprotax_analysis.py
+```
+
+> The script expects FAPROTAX at `/home/laugh/pepper/FAPROTAX_1.2.12/`. Edit the `FAPROTAX_DIR` variable at the top of `15_faprotax_analysis.py` if installed elsewhere.
+
+Output (`version-2_integrated/`):
+- `FAPROTAX_functional_table.tsv` — sample × function count table
+- `FAPROTAX_group_comparison.csv` — Space vs. Terrestrial log₂FC per function
+- `FAPROTAX_key_functions.csv` — significant functions (FDR < 0.05)
+- `Main_Fig_FAPROTAX.png/.pdf` — log₂FC barplot (top 20 functions)
+
+---
+
+### Step 12: βNTI + RCbray Null Model Analysis
+
+Tests deterministic vs. stochastic assembly processes using the Chase et al. (2011) framework.
+
+**Prerequisites:** Requires `picante` and a phylogenetic tree exported from QIIME2.
+
+```bash
+# Export rooted tree (after running 05_qiime2_pipeline.sh):
+qiime tools export \
+  --input-path version-2_integrated/rooted-tree.qza \
+  --output-path version-2_integrated/exported_tree
+
+# Run βNTI + RCbray (999 randomizations, ~10–30 min):
+conda activate qiime2-amplicon
+Rscript 16_bnti_rcbray_analysis.R
+```
+
+Output (`version-2_integrated/`):
+- `BNTI_RCbray_results.csv` — per-sample-pair βNTI and RCbray values
+- `BNTI_RCbray_summary.csv` — assembly process fractions per group
+- `BNTI_RCbray_plot.png/.pdf` — βNTI distribution histogram
+
+---
+
 ## Figure–Script Mapping
 
 | Figure | Script | Input data (`version-2_integrated/`) |
@@ -305,6 +355,8 @@ python 12_identify_asvs.py        # Identify top 5 dominant space ASVs (supports
 | **Fig 1E** | `10_network_analysis.py` | `exported_table_space/`, `exported_table_terrestrial/` |
 | **Supp Fig S1** | `13_supp_faith_pd.py` | `exported_diversity/alpha-diversity.tsv` |
 | **Supp Fig S2** | `14_supp_temporal.py` | `exported_diversity/` (all) |
+| **FAPROTAX** | `15_faprotax_analysis.py` | `exported_table_clean/`, `exported_taxonomy/` |
+| **βNTI/RCbray** | `16_bnti_rcbray_analysis.R` | `exported_table_clean/`, `exported_tree/tree.nwk` |
 | QC only | `07_supp_figures.py` | `exported_table_raw/`, `exported_denoising_stats/` |
 | QC only | `06_plot_depth.py` | `table_summary_stats/sample-frequency-detail.html` |
 | Exploratory only | `11_pathogen_screening.py` | `exported_table_clean/`, `exported_taxonomy/` |
