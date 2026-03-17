@@ -297,16 +297,16 @@ python 12_identify_asvs.py        # Identify top 5 dominant space ASVs (supports
 
 ## Figure–Script Mapping
 
-| Figure | Script | Description |
-|--------|--------|-------------|
-| **Fig 1B** | `07_supp_figures.py` | Phylum-level taxa barplot |
-| **Fig 1C** | `08_picrust2_analysis.py` | MetaCyc pathway Log₂FC |
-| **Fig 1D** | `09_taxon_function_corr.py` | Taxon–function Spearman heatmap |
-| **Fig 1E** | `10_network_analysis.py` | Co-occurrence networks + keystone |
-| **Supp Fig S1** | `13_supp_faith_pd.py` | Faith's PD comparison (Space vs. Terrestrial) |
-| **Supp Fig S2** | `14_supp_temporal.py` | Q1–4 temporal dynamics (Faith's PD, Shannon, PCoA, phylum) |
-| QC only | `07_supp_figures.py` | Denoising stats, plant DNA contamination |
-| QC only | `06_plot_depth.py` | Sequencing depth distribution |
+| Figure | Script | Input data (`version-2_integrated/`) |
+|--------|--------|--------------------------------------|
+| **Fig 1B** | `07_supp_figures.py` | `exported_table_raw/`, `exported_taxonomy/` |
+| **Fig 1C** | `08_picrust2_analysis.py` | `picrust2_out/` |
+| **Fig 1D** | `09_taxon_function_corr.py` | `exported_table_clean/`, `exported_taxonomy/` |
+| **Fig 1E** | `10_network_analysis.py` | `exported_table_space/`, `exported_table_terrestrial/` |
+| **Supp Fig S1** | `13_supp_faith_pd.py` | `exported_diversity/alpha-diversity.tsv` |
+| **Supp Fig S2** | `14_supp_temporal.py` | `exported_diversity/` (all) |
+| QC only | `07_supp_figures.py` | `exported_table_raw/`, `exported_denoising_stats/` |
+| QC only | `06_plot_depth.py` | `table_summary_stats/sample-frequency-detail.html` |
 
 ---
 
