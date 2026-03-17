@@ -47,14 +47,14 @@ def screen_pathogens():
     plt.xticks(rotation=45)
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.tight_layout()
-    plt.savefig('version-2_integrated/S_Fig6_Pathogen_Screening.png', dpi=300)
+    plt.savefig('version-2_integrated/Pathogen_Screening.png', dpi=300)
     
     # Summary Statistics
     summary = melted.groupby(['Pathogen_Genus', 'Study_Group'])['Relative Abundance (%)'].mean().unstack()
     print("\n--- Mean Relative Abundance (%) of Potential Pathogens ---")
     print(summary)
     
-    print("\nPathogen screening completed. S_Fig6 generated.")
+    print("\nPathogen screening completed. Pathogen_Screening.png generated.")
 
 if __name__ == "__main__":
     try:
