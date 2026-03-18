@@ -1,0 +1,5 @@
+Group,Attack,R,Fragility_Index
+Space_Flight,Targeted,0.1625,1.6354
+Terrestrial_Soil,Targeted,0.2,1.8045
+Space_Flight,Random,0.2658,1.6354
+Terrestrial_Soil,Random,0.3609,1.8045
