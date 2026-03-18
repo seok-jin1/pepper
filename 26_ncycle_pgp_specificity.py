@@ -272,10 +272,25 @@ def plot_results(ncycle_df, pgp_df, meta):
     }, index=NCYCLE_STEPS).rename(index=NCYCLE_LABELS)
 
     import seaborn as sns
-    sns.heatmap(step_means, ax=ax, annot=True, fmt='.2f',
+    import matplotlib.colors as mcolors
+
+    # Use RdYlGn colormap and create heatmap
+    cmap = plt.cm.get_cmap('RdYlGn')
+    norm = mcolors.Normalize(vmin=0, vmax=1)
+
+    sns.heatmap(step_means, ax=ax, annot=False,
                 cmap='RdYlGn', vmin=0, vmax=1,
                 linewidths=0.5, linecolor='white',
                 cbar_kws={'label': 'Fraction of Samples with Step Present'})
+
+    # Manually add text annotations (all black)
+    for i, row_label in enumerate(step_means.index):
+        for j, col_label in enumerate(step_means.columns):
+            val = step_means.iloc[i, j]
+            ax.text(j + 0.5, i + 0.5, f'{val:.2f}',
+                   ha='center', va='center', color='black',
+                   fontsize=10, fontweight='bold')
+
     ax.set_title('N-Cycle Step Presence\n(fraction of samples per group)', fontsize=11, fontweight='bold')
     ax.set_xticklabels(ax.get_xticklabels(), rotation=0, fontsize=11)
     ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=10)

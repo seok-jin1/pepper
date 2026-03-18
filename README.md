@@ -3,7 +3,7 @@
 **Can rhizosphere microbiomes support plants in space? Microbiomic evidence for functional network collapse in ISS-grown *Capsicum annuum***
 
 Seok-Jin Kang, Hongchul Shin
-*Plant Physiology* (2026, pre-proof)
+*Plant Physiology Letters* (2026, revised submission)
 Department of Biotechnology, Korea University, Seoul, Republic of Korea
 
 ---
@@ -13,11 +13,15 @@ Department of Biotechnology, Korea University, Seoul, Republic of Korea
 This repository contains the complete bioinformatics pipeline used in the study. We perform a multi-level comparative analysis of the *Capsicum annuum* rhizosphere microbiome grown aboard the International Space Station (ISS) versus terrestrial soil controls, integrating:
 
 - **16S rRNA amplicon sequencing** (QIIME2 + DADA2, V3–V4)
+- **FAPROTAX functional trait annotation** (curated, v1.2.12; Louca et al. 2016)
 - **Predicted functional pathways** (PICRUSt2 / MetaCyc)
-- **Taxon–function Spearman correlations** (Benjamini–Hochberg FDR corrected)
-- **Genus-level co-occurrence network analysis** (Spearman, |r| > 0.4, raw p < 0.05, subsampling validated)
+- **Compositional differential abundance** (ANCOM-BC; Lin & Peddada 2020)
+- **Community assembly null models** (βNTI/RCbray; picante)
+- **Genus-level co-occurrence network analysis** (Spearman |r| > 0.4, p < 0.05)
+- **Network robustness & threshold sensitivity simulations**
+- **Functional redundancy and N-cycle completeness quantification**
 
-**Key finding:** Spaceflight shifts the rhizosphere toward a stress-tolerant, Proteobacteria-dominated consortium, with concurrent loss of nitrogen-cycling capacity and hub connectivity collapse among keystone taxa (*Rhodanobacter*, *Gemmatimonas*).
+**Key finding:** Spaceflight restructures the rhizosphere toward a stochastically assembled, generalist-dominated community in which nitrogen-cycling capacity has structurally collapsed — nitrification abundance is >1000× lower in Space (FAPROTAX Log₂FC = −10.68, q < 0.001), nitrification functional redundancy drops from 4.80 to 0.20 contributing genera, and the keystone hub *Rhodanobacter* is absent from the Space co-occurrence network at all tested correlation thresholds.
 
 ---
 
@@ -28,7 +32,9 @@ This repository contains the complete bioinformatics pipeline used in the study.
 | **OSD-772** | ISS-grown *C. annuum* rhizosphere (NASA VEGGIE) | 106 (Space Flight) | [NASA OSDR](https://osdr.nasa.gov/bio/repo/data/studies/OSD-772) |
 | **PRJNA1145089** | Terrestrial soil-grown *C. annuum* rhizosphere | 20 (Terrestrial Soil) | [NCBI SRA](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1145089) |
 
-> **Note on sample groups:** The integrated metadata contains three groups — `Space_Flight` (n=106), `Ground_Seed` (ISS experiment ground controls within OSD-772, n=3), and `Terrestrial_Soil` (n=20). The manuscript compares **Space_Flight vs. Terrestrial_Soil** only. Scripts that operate on group-specific tables (`exported_table_space/`, `exported_table_terrestrial/`) handle this automatically. Scripts that use the combined clean table (`07_supp_figures.py` for Fig 1B, `09_taxon_function_corr.py` for Fig 1D) filter to `Space_Flight` and `Terrestrial_Soil` only, excluding Ground_Seed.
+> **Note on OSD-772 sample heterogeneity:** The 106 Space Flight samples span diverse sample types (rhizosphere, arcillite, wick, stem, fruit, leaf, seed, foam, swab, water). Script 24 (`24_sample_filter_sensitivity.py`) validates that all filter levels (ALL n=106, ROOT_ZONE n=36, STRICT rhizosphere n=4) yield the same direction of difference vs. Terrestrial.
+
+> **Note on sample groups:** The integrated metadata contains three groups — `Space_Flight` (n=106), `Ground_Seed` (ISS experiment ground controls within OSD-772, n=3), and `Terrestrial_Soil` (n=20). The manuscript compares **Space_Flight vs. Terrestrial_Soil** only. `Ground_Seed` is excluded from all main analyses.
 
 > **Raw data not included.** Download instructions are in [Step 0](#step-0-download-terrestrial-reference-data-prjna1145089) and [Step 1](#step-1-prepare-iss-data-osd-772) below.
 
@@ -39,32 +45,52 @@ This repository contains the complete bioinformatics pipeline used in the study.
 ```
 .
 ├── README.md
-├── config.py                     # Centralized paths and analysis parameters
+├── CLAUDE.md                         # Claude Code project instructions
+├── RESEARCH_NOTES.md                 # Post-rejection analysis plan and notes
+├── config.py                         # Centralized paths and analysis parameters
 ├── .gitignore
 │
 ├── envs/
-│   ├── qiime2-amplicon.yml       # Core environment (QIIME2, Python analysis)
-│   ├── picrust2.yml              # Functional prediction (PICRUSt2)
-│   └── pepper-network.yml        # R-based network analysis (SpiecEasi, optional)
+│   ├── qiime2-amplicon.yml           # Core environment (QIIME2, Python, R scripts)
+│   ├── picrust2.yml                  # Functional prediction (PICRUSt2)
+│   └── pepper-network.yml            # R-based SpiecEasi network (optional)
 │
-├── osd772_metadata.tsv           # OSD-772 sample metadata (NASA OSDR, bundled)
-│── 00_download_data.py           # Download PRJNA1145089 from NCBI ENA
-├── 01_create_metadata.py         # Merge OSD-772 and terrestrial metadata
-├── 02_generate_manifest.py       # Generate paired-end QIIME2 manifest
-├── 03_sync_ids.py                # Synchronize sample IDs across datasets
-├── 04_fix_ids.py                 # Fix sample ID formatting issues
-├── 05_qiime2_pipeline.sh         # Full QIIME2 amplicon processing pipeline
-├── 06_plot_depth.py              # Sequencing depth → rarefaction threshold (Supp Fig 5)
-├── 07_supp_figures.py            # Fig 1B + QC figures (denoising, plant DNA)
-├── 08_picrust2_analysis.py       # Fig 1C — MetaCyc pathway Log2FC
-├── 09_taxon_function_corr.py     # Fig 1D — Taxon–function Spearman heatmap
-├── 10_network_analysis.py        # Fig 1E — Genus co-occurrence network + keystone
-├── 11_pathogen_screening.py      # Exploratory: plant pathogen screening (not in paper figures)
-├── 12_identify_asvs.py           # Identify dominant space ASVs (supports manuscript text)
-├── 13_supp_faith_pd.py           # Supp Fig S1 — Faith's PD (Space vs Terrestrial)
-├── 14_supp_temporal.py           # Supp Fig S2 — Q1–Q4 temporal stability
+├── osd772_metadata.tsv               # OSD-772 sample metadata (NASA OSDR, bundled)
 │
-└── results/                      # Output directory (generated by scripts)
+├── 00_download_data.py               # Download PRJNA1145089 from NCBI ENA
+├── 01_create_metadata.py             # Merge OSD-772 and terrestrial metadata
+├── 02_generate_manifest.py           # Generate paired-end QIIME2 manifest
+├── 03_sync_ids.py                    # Synchronize sample IDs across datasets
+├── 04_fix_ids.py                     # Fix sample ID formatting issues
+├── 05_qiime2_pipeline.sh             # Full QIIME2 amplicon processing pipeline
+├── 06_plot_depth.py                  # Sequencing depth → rarefaction threshold
+├── 07_supp_figures.py                # Fig 1B (taxa barplot) + QC figures
+├── 08_picrust2_analysis.py           # Fig 1C — MetaCyc pathway Log₂FC
+├── 09_taxon_function_corr.py         # Fig 1D — Taxon–function Spearman heatmap
+├── 10_network_analysis.py            # Fig 1E — Genus co-occurrence network + keystone
+├── 11_pathogen_screening.py          # Exploratory: plant pathogen screening
+├── 12_identify_asvs.py               # Identify dominant Space ASVs
+├── 13_supp_faith_pd.py               # Supp Fig S1 — Faith's PD
+├── 14_supp_temporal.py               # Supp Fig S3 — Q1–Q4 temporal (old S2)
+│
+│   ── Post-rejection mechanistic analyses (Scripts 15–28) ──────────────────
+│
+├── 15_faprotax_analysis.py           # Fig 2a — FAPROTAX Log₂FC barplot
+├── 16_bnti_rcbray_analysis.R         # Supp Fig S4 — βNTI/RCbray assembly null model
+├── 17_faprotax_network.py            # FAPROTAX × network hub cross-reference
+├── 18_ancombc_plot.py                # ANCOM-BC differential abundance plot
+├── 19_indval.R                       # IndVal indicator species analysis
+├── 20_network_robustness.py          # Network robustness simulation (targeted vs. random)
+├── 21_beta_dispersion.R              # PERMDISP2 beta-dispersion
+├── 22_functional_redundancy.py       # Functional redundancy per FAPROTAX function
+├── 23_pgp_index.py                   # Plant growth-promoting (PGP) bacterial index
+├── 24_sample_filter_sensitivity.py   # Sample filter sensitivity (ALL/ROOT_ZONE/STRICT)
+├── 25_permanova.R                    # PERMANOVA + 1000-iteration subsampling validation
+├── 26_ncycle_pgp_specificity.py      # Fig 2b — N-cycle completeness + PGP specificity
+├── 27_network_threshold_sensitivity.py # Network robustness across |r| = 0.3/0.4/0.5
+├── 28_temporal_stability.py          # Temporal stability Q1–Q4 (FAPROTAX metrics)
+│
+└── version-2_integrated/             # All intermediate TSVs, CSVs, and figures
 ```
 
 ---
@@ -72,8 +98,9 @@ This repository contains the complete bioinformatics pipeline used in the study.
 ## Environment Setup
 
 ```bash
-# Core analysis (QIIME2, pandas, scipy, matplotlib, seaborn, networkx)
+# Core analysis (QIIME2, Python scripts 06–28, R scripts via Rscript)
 conda env create -f envs/qiime2-amplicon.yml
+conda activate qiime2-amplicon
 
 # Functional prediction (PICRUSt2 v2.5+)
 conda env create -f envs/picrust2.yml
@@ -82,18 +109,17 @@ conda env create -f envs/picrust2.yml
 conda env create -f envs/pepper-network.yml
 ```
 
-All Python analysis scripts (06–14) use the `qiime2-amplicon` environment unless noted.
+All Python scripts (06–28) and R scripts (16, 19, 21, 25) run in the `qiime2-amplicon` environment unless noted. Required R packages: `vegan`, `picante`, `ggplot2`, `dplyr`, `patchwork`, `indicspecies`.
 
 ---
 
-
 ## Full Pipeline — End-to-End Reproduction
 
-> **All scripts must be run from the `final/` directory** (the repository root):
+> **All scripts must be run from the repository root** (the directory containing `config.py`):
 > ```bash
-> cd final/
+> cd /path/to/pepper/
 > ```
-> Scripts use paths relative to this directory (e.g., `version-2_integrated/`, `external_data/`). Running from a different directory will cause file-not-found errors.
+> Scripts use paths relative to this root (e.g., `version-2_integrated/`). Running from a different directory will cause file-not-found errors.
 
 ### Step 0: Download Terrestrial Reference Data (PRJNA1145089)
 
@@ -102,11 +128,9 @@ conda activate qiime2-amplicon
 python 00_download_data.py
 ```
 
-Downloads 16S amplicon FASTQ files from NCBI ENA to `external_data/PRJNA1145089/`.
-The downloaded files are single-end concatenated by ENA. To obtain paired-end R1/R2 files required for QIIME2 import, split them using SRA Toolkit:
+Downloads 16S amplicon FASTQ files from NCBI ENA to `external_data/PRJNA1145089/`. To obtain paired-end R1/R2 files required for QIIME2:
 
 ```bash
-# One-time install (if needed): conda install -c bioconda sra-tools
 while read acc; do
   fasterq-dump --split-files --outdir external_data/PRJNA1145089 "$acc"
   gzip external_data/PRJNA1145089/${acc}_1.fastq external_data/PRJNA1145089/${acc}_2.fastq
@@ -124,14 +148,7 @@ external_data/OSD-772/GLDS-675_GAmplicon_<sample-id>_R1_raw.fastq.gz  (109 files
 external_data/OSD-772/GLDS-675_GAmplicon_<sample-id>_R2_raw.fastq.gz  (109 files)
 ```
 
-`osd_r1_list.txt` and `osd_r2_list.txt` are pre-configured for this path and included in the repository — no manual editing required.
-
-Also create `external_list.txt` with SRR accession IDs for PRJNA1145089:
-```
-SRR30151802
-SRR30151803
-...
-```
+`osd_r1_list.txt` and `osd_r2_list.txt` are pre-configured for this path and included in the repository.
 
 ---
 
@@ -139,18 +156,13 @@ SRR30151803
 
 ```bash
 python 01_create_metadata.py
+python 02_generate_manifest.py
+python 03_sync_ids.py
+python 04_fix_ids.py
 ```
-
-Merges OSD-772 metadata (`osd772_metadata.tsv`, included in this repo) with terrestrial sample metadata. Requires `external_mapping.txt` (tab-separated: `run_accession\tsample_alias`).
 
 Output: `version-2_integrated/integrated_metadata.tsv`
-→ Contains three groups: `Space_Flight` (n=106), `Ground_Seed` (n=3), `Terrestrial_Soil` (n=20)
-
-```bash
-python 02_generate_manifest.py  # Creates paired-end manifest
-python 03_sync_ids.py           # Sync IDs between table and metadata
-python 04_fix_ids.py            # Fix formatting issues
-```
+→ Three groups: `Space_Flight` (n=106), `Ground_Seed` (n=3), `Terrestrial_Soil` (n=20)
 
 ---
 
@@ -159,219 +171,189 @@ python 04_fix_ids.py            # Fix formatting issues
 ```bash
 conda activate qiime2-amplicon
 
-# Download SILVA 138 V3-V4 reference sequences and taxonomy (one-time):
+# Download SILVA 138 V3-V4 reference (one-time):
 mkdir -p classifiers
 wget "https://data.qiime2.org/2024.5/common/silva-138-99-seqs.qza" \
   -O classifiers/silva-138-99-seqs.qza
 wget "https://data.qiime2.org/2024.5/common/silva-138-99-tax.qza" \
   -O classifiers/silva-138-99-tax.qza
 
-# Train the Naive Bayes classifier (one-time, ~1 hr, ~16 GB RAM):
-# qiime feature-classifier classify-sklearn requires a TaxonomicClassifier artifact,
-# not the raw sequence file above. This step produces it.
+# Train Naive Bayes classifier (one-time, ~1 hr, ~16 GB RAM):
 qiime feature-classifier fit-classifier-naive-bayes \
   --i-reference-reads  classifiers/silva-138-99-seqs.qza \
   --i-reference-taxonomy classifiers/silva-138-99-tax.qza \
   --o-classifier classifiers/silva-138-99-classifier.qza
 
-# Run the full pipeline:
+# Run full pipeline:
 bash 05_qiime2_pipeline.sh
 ```
 
-> **Note:** `python config.py` (run from `final/`) validates that all required input files exist.
-> It will report missing files until Step 3 completes successfully — this is expected, not an error.
-
-The pipeline performs (in order):
-1. Import paired-end reads (`PairedEndFastqManifestPhred33V2`)
-2. DADA2 denoising (V3–V4: trunc-len-f 240, trunc-len-r 200)
-3. **Export raw table** → `version-2_integrated/exported_table_raw/` *(needed by 07_supp_figures.py)*
+Pipeline steps (in order):
+1. Import paired-end reads (PairedEndFastqManifestPhred33V2)
+2. DADA2 denoising (trunc-len-f 240, trunc-len-r 200)
+3. Export raw table → `exported_table_raw/`
 4. Taxonomic classification (SILVA 138)
 5. Filter mitochondria & chloroplast
 6. Phylogenetic tree (MAFFT + FastTree)
-7. Feature table summary + **export HTML** → `version-2_integrated/table_summary_stats/` *(needed by 06_plot_depth.py)*
-8. Core diversity metrics (rarefaction depth: 1,000 reads)
-9. Export tables as TSV (combined, Space-only, Terrestrial-only)
-10. PICRUSt2 functional prediction (instructions printed at end of script, run in `picrust2` env)
+7. Core diversity metrics (rarefaction depth: 1,000 reads)
+8. Export tables as TSV (combined, Space-only, Terrestrial-only)
+9. PICRUSt2 functional prediction (run separately in `picrust2` env)
+
+> **ANCOM-BC prerequisite:** Script 18 requires QIIME2 ANCOM-BC outputs. Run before `18_ancombc_plot.py`:
+> ```bash
+> # See ancombc_out/ for pre-generated outputs from this study
+> ```
 
 ---
 
-### Step 4: Sequencing Depth Plot (Supp Fig 5)
+### Steps 4–9: Original Figure Scripts
 
 ```bash
-python 06_plot_depth.py
-```
-
-Reads `version-2_integrated/table_summary_stats/sample-frequency-detail.html` (generated in Step 3) and visualizes depth distribution to justify the 1,000-read rarefaction threshold (retains ~86% of samples).
-
-Output: `version-2_integrated/sequencing_depth_distribution.png`
-
----
-
-### Step 5: QC Figures + Fig 1B (Taxa Barplot)
-
-```bash
-python 07_supp_figures.py
-```
-
-| Output | Description |
-|--------|-------------|
-| `version-2_integrated/S_Fig1_Denoising_Stats.png` | DADA2 read retention per sample |
-| `version-2_integrated/S_Fig3_Plant_DNA_Contamination.png` | Mitochondria/chloroplast proportion (uses raw table) |
-| `version-2_integrated/S_Fig4_Taxa_Barplot.png` | **Fig 1B** — Phylum-level relative abundance (top 10 phyla, sorted by Proteobacteria) |
-
----
-
-### Step 6: PICRUSt2 Pathway Analysis (Fig 1C)
-
-```bash
-python 08_picrust2_analysis.py
-```
-
-Computes Log₂ fold change of MetaCyc pathway abundances (Space Flight vs. Terrestrial Soil). Shows top 15 space-enriched and top 15 terrestrial-enriched pathways.
-
-Input: `version-2_integrated/picrust2_out/pathways_out/path_abun_unstrat.tsv.gz`
-Output: `version-2_integrated/Main_Fig4_Functional_Pathways.png`
-(A PDF copy is also saved to `manuscript_figures/Fig1C_Functional_Pathways.pdf`, created automatically.)
-
----
-
-### Step 7: Taxon–Function Correlation (Fig 1D)
-
-```bash
-python 09_taxon_function_corr.py
-```
-
-Spearman correlations between top 10 genera and 15 MetaCyc pathways (150 pairs). BH-FDR corrected; non-significant pairs (q ≥ 0.05) masked in heatmap.
-
-Output:
-- `version-2_integrated/Main_Fig6_Taxon_Function_Correlation.png`
-- `version-2_integrated/Taxon_Function_Correlation_FDR.csv`
-
----
-
-### Step 8: Co-occurrence Network Analysis (Fig 1E)
-
-```bash
-python 10_network_analysis.py
-```
-
-Genus-level Spearman co-occurrence networks for Space Flight and Terrestrial Soil:
-- **Taxa:** Top 15 shared genera
-- **Edge threshold:** |r| > 0.4, raw p < 0.05
-- **Subsampling validation:** 100 iterations, n=20 from Space Flight (seed=42) — controls for sample-size artifact
-- **Keystone analysis:** Hub genera by degree; tracked across groups
-
-Output (to `version-2_integrated/`):
-- `Network_Genus_Metrics.csv` — edge count, density, avg degree, negative edges per group
-- `Keystone_Genus_Comparison.csv` — degree of each genus in Space Flight vs. Terrestrial
-- `Network_Genus_Fast_Metrics.csv` — subsampling validation: 100 iterations of n=20 Space Flight samples (seed=42), network metrics per iteration
-
----
-
-### Step 9: Supplementary Figures S1 & S2
-
-**Supp Fig S1 — Faith's Phylogenetic Diversity (Space vs. Terrestrial):**
-```bash
-python 13_supp_faith_pd.py
-```
-Output: `results/FigS1_FaithPD.pdf/.png`
-*(Space Flight: 10.05 ± 2.83; Terrestrial: 24.98 ± 5.19; Wilcoxon p < 0.001, r_rb = −0.98)*
-
-**Supp Fig S2 — Temporal Stability Q1–04 (panels A–D):**
-```bash
-python 14_supp_temporal.py
-```
-Output: `results/FigS2_Temporal_Q1_Q4.pdf/.png`
-*(Faith's PD: KW p = 0.550; Shannon: KW p = 0.317 — community stable across planting cycles)*
-
----
-
-### Step 10: Exploratory / Supporting Analyses
-
-```bash
-python 11_pathogen_screening.py   # Pathogen relative abundance by group (not in paper figures)
-python 12_identify_asvs.py        # Identify top 5 dominant space ASVs (supports manuscript text)
+python 06_plot_depth.py          # Supp: sequencing depth distribution
+python 07_supp_figures.py        # Fig 1B (taxa barplot) + QC figures
+python 08_picrust2_analysis.py   # Fig 1C — MetaCyc pathway Log₂FC
+python 09_taxon_function_corr.py # Fig 1D — taxon–function heatmap
+python 10_network_analysis.py    # Fig 1E — co-occurrence network
+python 13_supp_faith_pd.py       # Supp Fig S1 — Faith's PD
+python 14_supp_temporal.py       # Supp Fig S3 — Q1–Q4 temporal
 ```
 
 ---
 
-### Step 11: FAPROTAX Functional Trait Analysis
+### Steps 10–23: Post-Rejection Mechanistic Analyses (Scripts 15–28)
 
-Literature-validated functional trait assignment using FAPROTAX 1.2.12 (Louca et al. 2016).
+Run in numerical order. All output to `version-2_integrated/`.
 
-**Install FAPROTAX** (one-time):
 ```bash
-# Download FAPROTAX_1.2.12.zip from https://pages.uoregon.edu/slouca/LoucaLab/archive/FAPROTAX/
-unzip FAPROTAX_1.2.12.zip -d /path/to/faprotax/
-```
-
-**Run analysis:**
-```bash
-conda activate qiime2-amplicon
+# Step 10 — FAPROTAX functional trait annotation
 python 15_faprotax_analysis.py
-```
+# Requires FAPROTAX 1.2.12 at /home/laugh/pepper/FAPROTAX_1.2.12/
+# Edit FAPROTAX_DIR in script if installed elsewhere
 
-> The script expects FAPROTAX at `/home/laugh/pepper/FAPROTAX_1.2.12/`. Edit the `FAPROTAX_DIR` variable at the top of `15_faprotax_analysis.py` if installed elsewhere.
-
-Output (`version-2_integrated/`):
-- `FAPROTAX_functional_table.tsv` — sample × function count table
-- `FAPROTAX_group_comparison.csv` — Space vs. Terrestrial log₂FC per function
-- `FAPROTAX_key_functions.csv` — significant functions (FDR < 0.05)
-- `Main_Fig_FAPROTAX.png/.pdf` — log₂FC barplot (top 20 functions)
-
----
-
-### Step 12: βNTI + RCbray Null Model Analysis
-
-Tests deterministic vs. stochastic assembly processes using the Chase et al. (2011) framework.
-
-**Prerequisites:** Requires `picante` and a phylogenetic tree exported from QIIME2.
-
-```bash
-# Export rooted tree (after running 05_qiime2_pipeline.sh):
+# Step 11 — βNTI/RCbray community assembly null model (~10–30 min)
+# Requires rooted tree exported from QIIME2:
 qiime tools export \
   --input-path version-2_integrated/rooted-tree.qza \
   --output-path version-2_integrated/exported_tree
-
-# Run βNTI + RCbray (999 randomizations, ~10–30 min):
-conda activate qiime2-amplicon
 Rscript 16_bnti_rcbray_analysis.R
+
+# Step 12 — FAPROTAX × network hub cross-reference
+python 17_faprotax_network.py
+
+# Step 13 — ANCOM-BC differential abundance (genus level)
+python 18_ancombc_plot.py
+# Reads from ancombc_out/ancombc-genus-exported/
+
+# Step 14 — IndVal indicator species
+Rscript 19_indval.R
+
+# Step 15 — Network robustness simulation
+python 20_network_robustness.py
+
+# Step 16 — Beta-dispersion (PERMDISP2)
+Rscript 21_beta_dispersion.R
+
+# Step 17 — Functional redundancy
+python 22_functional_redundancy.py
+
+# Step 18 — PGP bacterial index
+python 23_pgp_index.py
+
+# Step 19 — Sample filter sensitivity (ALL / ROOT_ZONE / STRICT)
+python 24_sample_filter_sensitivity.py
+
+# Step 20 — PERMANOVA + subsampling validation (1000 iterations, ~5–10 min)
+Rscript 25_permanova.R
+
+# Step 21 — N-cycle completeness + PGP specificity
+python 26_ncycle_pgp_specificity.py
+
+# Step 22 — Network threshold sensitivity (|r| = 0.3 / 0.4 / 0.5)
+python 27_network_threshold_sensitivity.py
+
+# Step 23 — Temporal stability Q1–Q4 (FAPROTAX metrics)
+python 28_temporal_stability.py
 ```
 
-Output (`version-2_integrated/`):
-- `BNTI_RCbray_results.csv` — per-sample-pair βNTI and RCbray values
-- `BNTI_RCbray_summary.csv` — assembly process fractions per group
-- `BNTI_RCbray_plot.png/.pdf` — βNTI distribution histogram
+---
+
+## Output Files: Scripts 15–28
+
+All files in `version-2_integrated/` unless otherwise noted.
+
+| Script | Data output | Figure output |
+|--------|-------------|---------------|
+| **15** `15_faprotax_analysis.py` | `FAPROTAX_functional_table.tsv`<br>`FAPROTAX_group_comparison.csv`<br>`FAPROTAX_key_functions.csv`<br>`FAPROTAX_report.txt` | `Main_Fig_FAPROTAX.png/.pdf`<br>`Main_Fig_FAPROTAX_Log2FC.png/.pdf`<br>`Main_Fig_FAPROTAX_Ncycle.png/.pdf` |
+| **16** `16_bnti_rcbray_analysis.R` | `BNTI_RCbray_results.csv`<br>`BNTI_RCbray_summary.csv` | `BNTI_RCbray_plot.png/.pdf` |
+| **17** `17_faprotax_network.py` | `FAPROTAX_Network_CrossRef.csv` | `Main_Fig_FAPROTAX_Network.png/.pdf` |
+| **18** `18_ancombc_plot.py` | `ancombc_out/ancombc-genus-exported/` | `Main_Fig_ANCOMBC.png/.pdf` |
+| **19** `19_indval.R` | `IndVal_results.csv`<br>`IndVal_significant.csv` | `Main_Fig_IndVal.png/.pdf` |
+| **20** `20_network_robustness.py` | `Network_Robustness_Results.csv`<br>`Network_Robustness_Summary.csv` | `Main_Fig_NetworkRobustness.png/.pdf` |
+| **21** `21_beta_dispersion.R` | `BetaDispersion_results.csv`<br>`BetaDispersion_summary.csv` | `Main_Fig_BetaDispersion.png/.pdf` |
+| **22** `22_functional_redundancy.py` | `Functional_Redundancy_Results.csv`<br>`Functional_Redundancy_Summary.csv` | `Main_Fig_FunctionalRedundancy.png/.pdf` |
+| **23** `23_pgp_index.py` | `PGP_Index_Results.csv`<br>`PGP_Index_Summary.csv`<br>`PGP_Specificity_Results.csv` | `Main_Fig_PGP_Index.png/.pdf` |
+| **24** `24_sample_filter_sensitivity.py` | — | `SampleType_Composition.png/.pdf` |
+| **25** `25_permanova.R` | `PERMANOVA_results.csv`<br>`PERMANOVA_subsampling.csv` | `Main_Fig_PERMANOVA.png/.pdf` |
+| **26** `26_ncycle_pgp_specificity.py` | `NCycle_Completeness_Results.csv`<br>`NCycle_Completeness_Summary.csv`<br>`PGP_Specificity_Results.csv` | `Main_Fig_NCycle_PGP.png/.pdf` |
+| **27** `27_network_threshold_sensitivity.py` | `NetworkSensitivity_Results.csv` | `Main_Fig_NetworkSensitivity.png/.pdf` |
+| **28** `28_temporal_stability.py` | `TemporalStability_Results.csv` | `Main_Fig_TemporalStability.png/.pdf` |
 
 ---
 
 ## Figure–Script Mapping
 
-| Figure | Script | Input data (`version-2_integrated/`) |
-|--------|--------|--------------------------------------|
-| **Fig 1B** | `07_supp_figures.py` | `exported_table_raw/`, `exported_taxonomy/` |
-| **Fig 1C** | `08_picrust2_analysis.py` | `picrust2_out/` |
-| **Fig 1D** | `09_taxon_function_corr.py` | `exported_table_clean/`, `exported_taxonomy/` |
-| **Fig 1E** | `10_network_analysis.py` | `exported_table_space/`, `exported_table_terrestrial/` |
-| **Supp Fig S1** | `13_supp_faith_pd.py` | `exported_diversity/alpha-diversity.tsv` |
-| **Supp Fig S2** | `14_supp_temporal.py` | `exported_diversity/` (all) |
-| **FAPROTAX** | `15_faprotax_analysis.py` | `exported_table_clean/`, `exported_taxonomy/` |
-| **βNTI/RCbray** | `16_bnti_rcbray_analysis.R` | `exported_table_clean/`, `exported_tree/tree.nwk` |
-| QC only | `07_supp_figures.py` | `exported_table_raw/`, `exported_denoising_stats/` |
-| QC only | `06_plot_depth.py` | `table_summary_stats/sample-frequency-detail.html` |
-| Exploratory only | `11_pathogen_screening.py` | `exported_table_clean/`, `exported_taxonomy/` |
-| Exploratory only | `12_identify_asvs.py` | `exported_table_space/`, `exported_taxonomy/`, `exported_sequences/` |
+### Main Figures
+
+| Figure | Panel | Script | Key result |
+|--------|-------|--------|------------|
+| **Fig 1A** | Overview schematic | — | Conceptual diagram |
+| **Fig 1B** | Phylum barplot | `07_supp_figures.py` | Proteobacteria shift |
+| **Fig 1C** | PICRUSt2 Log₂FC | `08_picrust2_analysis.py` | Nitrifier denitrification −11.5 |
+| **Fig 1D** | Taxon–function heatmap | `09_taxon_function_corr.py` | Rhodanobacter–nitrification link |
+| **Fig 1E** | Co-occurrence network | `10_network_analysis.py` | Hub collapse |
+| **Fig 2A** | FAPROTAX Log₂FC | `15_faprotax_analysis.py` | Nitrification Log₂FC = −10.68 |
+| **Fig 2B** | N-cycle completeness | `26_ncycle_pgp_specificity.py` | Space 73% vs. Terrestrial 100% |
+| **Fig 2C** | Functional redundancy | `22_functional_redundancy.py` | Nitrification 0.20 vs. 4.80 genera |
+| **Fig 2D** | FAPROTAX × network | `17_faprotax_network.py` | Nitrifiers as Terrestrial hubs |
+
+### Supplementary Figures
+
+| Supp Fig | Script | Description |
+|----------|--------|-------------|
+| **S1** | `13_supp_faith_pd.py` | Faith's PD: Space 10.05 vs. Terrestrial 24.98 |
+| **S2** | `25_permanova.R` | PERMANOVA bootstrap validation (1000 iterations) |
+| **S3** | `14_supp_temporal.py` | Q1–Q4 temporal stability (Faith's PD, Shannon) |
+| **S4** | `16_bnti_rcbray_analysis.R` | βNTI/RCbray distribution: Terrestrial 93.2% deterministic vs. Space <0.1% |
+| **S5** | `21_beta_dispersion.R` | Beta-dispersion: Space 0.574 vs. Terrestrial 0.398 |
+| **S6** | `27_network_threshold_sensitivity.py` | Network metrics across |r| = 0.3/0.4/0.5 |
+| **S7** | `28_temporal_stability.py` | Temporal stability of FAPROTAX metrics (KW p = 0.16–0.30) |
+
+---
+
+## Key Results Summary
+
+| Analysis | Space Flight | Terrestrial Soil | Statistic |
+|----------|-------------|-----------------|-----------|
+| PERMANOVA R² (ROOT_ZONE) | — | — | F=70.15, R²=0.565, p=0.001 |
+| Shannon diversity | 2.66 ± — | 6.23 ± — | p < 0.001 |
+| Beta-dispersion (Bray-Curtis) | 0.574 ± 0.118 | 0.398 ± 0.082 | F=40.45, p=0.001 |
+| Nitrification (FAPROTAX Log₂FC) | — | — | −10.68, q < 0.001 |
+| N-cycle completeness | 0.730 ± 0.193 | 1.000 ± 0.000 | p < 0.001 |
+| Nitrification redundancy (genera) | 0.20 | 4.80 | q < 0.001 |
+| Deterministic assembly (βNTI) | <0.1% | 93.2% | — |
+| Rhodanobacter hub degree | 0 (all thresholds) | 6–8 | — |
 
 ---
 
 ## Reproducibility
 
-- Core analysis parameters and paths for scripts 08–10 are centralized in `config.py` (random seed = 42); scripts 00–07, 11–14 use paths relative to `final/`
-- MetaCyc pathway descriptions: `version-2_integrated/metacyc_pathways_info.txt.gz`
-- Validate required input files exist before running analysis:
+- Core analysis parameters and paths for scripts 08–10 are centralized in `config.py` (`RANDOM_SEED = 42`); scripts 00–07, 11–14 use hardcoded relative paths
+- Validate all required input files before running:
   ```bash
   python config.py
   ```
+- MetaCyc pathway descriptions: `version-2_integrated/metacyc_pathways_info.txt.gz`
+- ANCOM-BC pre-generated outputs: `version-2_integrated/ancombc_out/`
 
 ---
 
@@ -380,7 +362,6 @@ Output (`version-2_integrated/`):
 This work was supported by the Google Cloud Research Credits program (award GCP477932969).
 
 ---
-
 
 ## Contact
 
