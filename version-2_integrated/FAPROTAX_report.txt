@@ -1,5 +1,5 @@
 # Report for collapsed table: /home/laugh/temp/pepper/version-2_integrated/FAPROTAX_functional_table.tsv
-# Collapsed table generated on: 2026.03.18 00:30:55
+# Collapsed table generated on: 2026.03.18 00:48:28
 # Original table: /home/laugh/temp/pepper/version-2_integrated/faprotax_input.tsv
 # Details:
 #  Original classical table contained 1740 rows and 127 columns

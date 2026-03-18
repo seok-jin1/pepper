@@ -53,7 +53,7 @@ cat("[1] Loading data...\n")
 # Feature table (ASVs × samples)
 otu_raw <- read.table(
   file.path(WORKDIR, "exported_table_clean/feature-table.tsv"),
-  sep = "\t", header = TRUE, row.names = 1, skip = 1, check.names = FALSE
+  sep = "\t", header = TRUE, row.names = 1, skip = 1, check.names = FALSE, comment.char = ""
 )
 # picante expects samples as rows
 otu <- t(otu_raw)
