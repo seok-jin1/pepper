@@ -334,8 +334,8 @@ def plot_log2fc(result):
 
     plt.tight_layout()
 
-    png_path = OUTPUT_DIR / 'Main_Fig_FAPROTAX_Log2FC.png'
-    pdf_path = OUTPUT_DIR / 'Main_Fig_FAPROTAX_Log2FC.pdf'
+    png_path = OUTPUT_DIR / 'Main_Fig2a_FAPROTAX_Log2FC.png'
+    pdf_path = OUTPUT_DIR / 'Main_Fig2a_FAPROTAX_Log2FC.pdf'
     plt.savefig(png_path, dpi=300, bbox_inches='tight')
     plt.savefig(pdf_path, bbox_inches='tight')
     plt.close()

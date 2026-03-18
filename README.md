@@ -64,31 +64,28 @@ This repository contains the complete bioinformatics pipeline used in the study.
 ├── 04_fix_ids.py                     # Fix sample ID formatting issues
 ├── 05_qiime2_pipeline.sh             # Full QIIME2 amplicon processing pipeline
 ├── 06_plot_depth.py                  # Sequencing depth → rarefaction threshold
-├── 07_supp_figures.py                # Fig 1B (taxa barplot) + QC figures
-├── 08_picrust2_analysis.py           # Fig 1C — MetaCyc pathway Log₂FC
-├── 09_taxon_function_corr.py         # Fig 1D — Taxon–function Spearman heatmap
-├── 10_network_analysis.py            # Fig 1E — Genus co-occurrence network + keystone
-├── 11_pathogen_screening.py          # Exploratory: plant pathogen screening
-├── 12_identify_asvs.py               # Identify dominant Space ASVs
-├── 13_supp_faith_pd.py               # Supp Fig S1 — Faith's PD
-├── 14_supp_temporal.py               # Supp Fig S3 — Q1–Q4 temporal (old S2)
+├── 07_supp_figures.py                # → Main_Fig1B_Taxa_Barplot.png/.pdf
+├── 08_picrust2_analysis.py           # → Main_Fig1C_Functional_Pathways.png/.pdf
+├── 09_taxon_function_corr.py         # → Main_Fig2E_Taxon_Function_Correlation.png/.pdf
+├── 10_network_analysis.py            # → Main_Fig2F_Network.png/.pdf
+├── 13_supp_faith_pd.py               # → Supp_S1_FaithPD.png/.pdf  [Supp Fig S1]
+├── 14_supp_temporal.py               # → Supp_S3_Temporal_Q1_Q4.png/.pdf  [Supp Fig S3]
 │
-│   ── Post-rejection mechanistic analyses (Scripts 15–28) ──────────────────
+│   ── Post-rejection mechanistic analyses (Scripts 15–27) ──────────────────
 │
-├── 15_faprotax_analysis.py           # Fig 2a — FAPROTAX Log₂FC barplot
-├── 16_bnti_rcbray_analysis.R         # Supp Fig S4 — βNTI/RCbray assembly null model
-├── 17_faprotax_network.py            # FAPROTAX × network hub cross-reference
-├── 18_ancombc_plot.py                # ANCOM-BC differential abundance plot
-├── 19_indval.R                       # IndVal indicator species analysis
-├── 20_network_robustness.py          # Network robustness simulation (targeted vs. random)
-├── 21_beta_dispersion.R              # PERMDISP2 beta-dispersion
-├── 22_functional_redundancy.py       # Functional redundancy per FAPROTAX function
-├── 23_pgp_index.py                   # Plant growth-promoting (PGP) bacterial index
-├── 24_sample_filter_sensitivity.py   # Sample filter sensitivity (ALL/ROOT_ZONE/STRICT)
-├── 25_permanova.R                    # PERMANOVA + 1000-iteration subsampling validation
-├── 26_ncycle_pgp_specificity.py      # Fig 2b — N-cycle completeness + PGP specificity
-├── 27_network_threshold_sensitivity.py # Network robustness across |r| = 0.3/0.4/0.5
-├── 28_temporal_stability.py          # Temporal stability Q1–Q4 (FAPROTAX metrics)
+├── 15_faprotax_analysis.py           # → Main_Fig2a_FAPROTAX_Log2FC.png/.pdf  [Fig 2a]
+├── 16_bnti_rcbray_analysis.R         # → Main_Fig2d_BNTI_RCbray.png/.pdf  [Fig 2d]
+├── 17_faprotax_network.py            # FAPROTAX × network hub cross-reference (supporting)
+├── 18_ancombc_plot.py                # ANCOM-BC differential abundance (supporting)
+├── 19_indval.R                       # IndVal indicator species (supporting)
+├── 20_network_robustness.py          # Network robustness simulation (supporting)
+├── 21_beta_dispersion.R              # PERMDISP2 beta-dispersion (supporting)
+├── 22_functional_redundancy.py       # → Main_Fig2c_FunctionalRedundancy.png/.pdf  [Fig 2c]
+├── 23_pgp_index.py                   # PGP bacterial index (supporting)
+├── 24_sample_filter_sensitivity.py   # Sample filter sensitivity (supporting)
+├── 25_permanova.R                    # → Supp_S2_PERMANOVA.png/.pdf  [Supp Fig S2]
+├── 26_ncycle_pgp_specificity.py      # → Main_Fig2b_NCycle_PGP.png/.pdf  [Fig 2b]
+├── 27_network_threshold_sensitivity.py # → Supp_S4_NetworkSensitivity.png/.pdf  [Supp Fig S4]
 │
 └── version-2_integrated/             # All intermediate TSVs, CSVs, and figures
 ```
@@ -98,7 +95,7 @@ This repository contains the complete bioinformatics pipeline used in the study.
 ## Environment Setup
 
 ```bash
-# Core analysis (QIIME2, Python scripts 06–28, R scripts via Rscript)
+# Core analysis (QIIME2, Python scripts 06–27, R scripts via Rscript)
 conda env create -f envs/qiime2-amplicon.yml
 conda activate qiime2-amplicon
 
@@ -109,7 +106,7 @@ conda env create -f envs/picrust2.yml
 conda env create -f envs/pepper-network.yml
 ```
 
-All Python scripts (06–28) and R scripts (16, 19, 21, 25) run in the `qiime2-amplicon` environment unless noted. Required R packages: `vegan`, `picante`, `ggplot2`, `dplyr`, `patchwork`, `indicspecies`.
+All Python scripts (06–27) and R scripts (16, 19, 21, 25) run in the `qiime2-amplicon` environment unless noted. Required R packages: `vegan`, `picante`, `ggplot2`, `dplyr`, `patchwork`, `indicspecies`.
 
 ---
 
@@ -210,93 +207,87 @@ Pipeline steps (in order):
 
 ```bash
 python 06_plot_depth.py          # Supp: sequencing depth distribution
-python 07_supp_figures.py        # Fig 1B (taxa barplot) + QC figures
-python 08_picrust2_analysis.py   # Fig 1C — MetaCyc pathway Log₂FC
-python 09_taxon_function_corr.py # Fig 1D — taxon–function heatmap
-python 10_network_analysis.py    # Fig 1E — co-occurrence network
+python 07_supp_figures.py        # Fig 1b — phylum barplot
+python 08_picrust2_analysis.py   # Fig 1c — MetaCyc pathway Log₂FC
+python 09_taxon_function_corr.py # Fig 2e — taxon–function heatmap
+python 10_network_analysis.py    # Fig 2f — co-occurrence network
 python 13_supp_faith_pd.py       # Supp Fig S1 — Faith's PD
 python 14_supp_temporal.py       # Supp Fig S3 — Q1–Q4 temporal
 ```
 
 ---
 
-### Steps 10–23: Post-Rejection Mechanistic Analyses (Scripts 15–28)
+### Steps 10–18: Post-Rejection Mechanistic Analyses (Scripts 15–27)
 
 Run in numerical order. All output to `version-2_integrated/`.
 
 ```bash
-# Step 10 — FAPROTAX functional trait annotation
+# Step 10 — Fig 2a: FAPROTAX functional trait annotation
 python 15_faprotax_analysis.py
 # Requires FAPROTAX 1.2.12 at /home/laugh/pepper/FAPROTAX_1.2.12/
 # Edit FAPROTAX_DIR in script if installed elsewhere
 
-# Step 11 — βNTI/RCbray community assembly null model (~10–30 min)
+# Step 11 — Fig 2d: βNTI/RCbray community assembly null model (~10–30 min)
 # Requires rooted tree exported from QIIME2:
 qiime tools export \
   --input-path version-2_integrated/rooted-tree.qza \
   --output-path version-2_integrated/exported_tree
 Rscript 16_bnti_rcbray_analysis.R
 
-# Step 12 — FAPROTAX × network hub cross-reference
+# Step 12 — Fig 2c: Functional redundancy
+python 22_functional_redundancy.py
+
+# Step 13 — Supp Fig S2: PERMANOVA + subsampling validation (1000 iterations, ~5–10 min)
+Rscript 25_permanova.R
+
+# Step 14 — Fig 2b: N-cycle completeness + PGP specificity
+python 26_ncycle_pgp_specificity.py
+
+# Step 15 — Supp Fig S4: Network threshold sensitivity (|r| = 0.3 / 0.4 / 0.5)
+python 27_network_threshold_sensitivity.py
+
+# Step 16 — Supporting: FAPROTAX × network hub cross-reference
 python 17_faprotax_network.py
 
-# Step 13 — ANCOM-BC differential abundance (genus level)
+# Step 17 — Supporting: ANCOM-BC differential abundance (genus level)
 python 18_ancombc_plot.py
 # Reads from ancombc_out/ancombc-genus-exported/
 
-# Step 14 — IndVal indicator species
+# Step 18 — Supporting: IndVal, network robustness, beta-dispersion, PGP, filter sensitivity
 Rscript 19_indval.R
-
-# Step 15 — Network robustness simulation
 python 20_network_robustness.py
-
-# Step 16 — Beta-dispersion (PERMDISP2)
 Rscript 21_beta_dispersion.R
-
-# Step 17 — Functional redundancy
-python 22_functional_redundancy.py
-
-# Step 18 — PGP bacterial index
 python 23_pgp_index.py
-
-# Step 19 — Sample filter sensitivity (ALL / ROOT_ZONE / STRICT)
 python 24_sample_filter_sensitivity.py
-
-# Step 20 — PERMANOVA + subsampling validation (1000 iterations, ~5–10 min)
-Rscript 25_permanova.R
-
-# Step 21 — N-cycle completeness + PGP specificity
-python 26_ncycle_pgp_specificity.py
-
-# Step 22 — Network threshold sensitivity (|r| = 0.3 / 0.4 / 0.5)
-python 27_network_threshold_sensitivity.py
-
-# Step 23 — Temporal stability Q1–Q4 (FAPROTAX metrics)
-python 28_temporal_stability.py
 ```
 
 ---
 
-## Output Files: Scripts 15–28
+## Output Files
 
 All files in `version-2_integrated/` unless otherwise noted.
 
-| Script | Data output | Figure output |
-|--------|-------------|---------------|
-| **15** `15_faprotax_analysis.py` | `FAPROTAX_functional_table.tsv`<br>`FAPROTAX_group_comparison.csv`<br>`FAPROTAX_key_functions.csv`<br>`FAPROTAX_report.txt` | `Main_Fig_FAPROTAX.png/.pdf`<br>`Main_Fig_FAPROTAX_Log2FC.png/.pdf`<br>`Main_Fig_FAPROTAX_Ncycle.png/.pdf` |
-| **16** `16_bnti_rcbray_analysis.R` | `BNTI_RCbray_results.csv`<br>`BNTI_RCbray_summary.csv` | `BNTI_RCbray_plot.png/.pdf` |
-| **17** `17_faprotax_network.py` | `FAPROTAX_Network_CrossRef.csv` | `Main_Fig_FAPROTAX_Network.png/.pdf` |
-| **18** `18_ancombc_plot.py` | `ancombc_out/ancombc-genus-exported/` | `Main_Fig_ANCOMBC.png/.pdf` |
-| **19** `19_indval.R` | `IndVal_results.csv`<br>`IndVal_significant.csv` | `Main_Fig_IndVal.png/.pdf` |
-| **20** `20_network_robustness.py` | `Network_Robustness_Results.csv`<br>`Network_Robustness_Summary.csv` | `Main_Fig_NetworkRobustness.png/.pdf` |
-| **21** `21_beta_dispersion.R` | `BetaDispersion_results.csv`<br>`BetaDispersion_summary.csv` | `Main_Fig_BetaDispersion.png/.pdf` |
-| **22** `22_functional_redundancy.py` | `Functional_Redundancy_Results.csv`<br>`Functional_Redundancy_Summary.csv` | `Main_Fig_FunctionalRedundancy.png/.pdf` |
-| **23** `23_pgp_index.py` | `PGP_Index_Results.csv`<br>`PGP_Index_Summary.csv`<br>`PGP_Specificity_Results.csv` | `Main_Fig_PGP_Index.png/.pdf` |
-| **24** `24_sample_filter_sensitivity.py` | — | `SampleType_Composition.png/.pdf` |
-| **25** `25_permanova.R` | `PERMANOVA_results.csv`<br>`PERMANOVA_subsampling.csv` | `Main_Fig_PERMANOVA.png/.pdf` |
-| **26** `26_ncycle_pgp_specificity.py` | `NCycle_Completeness_Results.csv`<br>`NCycle_Completeness_Summary.csv`<br>`PGP_Specificity_Results.csv` | `Main_Fig_NCycle_PGP.png/.pdf` |
-| **27** `27_network_threshold_sensitivity.py` | `NetworkSensitivity_Results.csv` | `Main_Fig_NetworkSensitivity.png/.pdf` |
-| **28** `28_temporal_stability.py` | `TemporalStability_Results.csv` | `Main_Fig_TemporalStability.png/.pdf` |
+### Main Figures
+
+| Figure | Script | Figure output | Data output |
+|--------|--------|---------------|-------------|
+| **Fig 1b** | `07_supp_figures.py` | `Main_Fig1B_Taxa_Barplot.png/.pdf` | — |
+| **Fig 1c** | `08_picrust2_analysis.py` | `Main_Fig1C_Functional_Pathways.png/.pdf` | — |
+| **Fig 2a** | `15_faprotax_analysis.py` | `Main_Fig2a_FAPROTAX_Log2FC.png/.pdf` | `FAPROTAX_functional_table.tsv`<br>`FAPROTAX_group_comparison.csv`<br>`FAPROTAX_key_functions.csv`<br>`FAPROTAX_report.txt` |
+| **Fig 2b** | `26_ncycle_pgp_specificity.py` | `Main_Fig2b_NCycle_PGP.png/.pdf` | `NCycle_Completeness_Results.csv`<br>`NCycle_Completeness_Summary.csv`<br>`PGP_Specificity_Results.csv` |
+| **Fig 2c** | `22_functional_redundancy.py` | `Main_Fig2c_FunctionalRedundancy.png/.pdf` | `Functional_Redundancy_Results.csv`<br>`Functional_Redundancy_Summary.csv` |
+| **Fig 2d** | `16_bnti_rcbray_analysis.R` | `Main_Fig2d_BNTI_RCbray.png/.pdf` | `BNTI_RCbray_results.csv`<br>`BNTI_RCbray_summary.csv` |
+| **Fig 2e** | `09_taxon_function_corr.py` | `Main_Fig2E_Taxon_Function_Correlation.png/.pdf` | — |
+| **Fig 2f** | `10_network_analysis.py` | `Main_Fig2F_Network.png/.pdf` | `Network_Keystone_Genera.csv` |
+
+### Supplementary Figures
+
+| Supp Fig | Script | Figure output | Data output |
+|----------|--------|---------------|-------------|
+| **S1** | `13_supp_faith_pd.py` | `Supp_S1_FaithPD.png/.pdf` | — |
+| **S2** | `25_permanova.R` | `Supp_S2_PERMANOVA.png/.pdf` | `PERMANOVA_results.csv`<br>`PERMANOVA_subsampling.csv` |
+| **S3** | `14_supp_temporal.py` | `Supp_S3_Temporal_Q1_Q4.png/.pdf` | — |
+| **S4** | `27_network_threshold_sensitivity.py` | `Supp_S4_NetworkSensitivity.png/.pdf` | `NetworkSensitivity_Results.csv` |
 
 ---
 
@@ -306,15 +297,15 @@ All files in `version-2_integrated/` unless otherwise noted.
 
 | Figure | Panel | Script | Key result |
 |--------|-------|--------|------------|
-| **Fig 1A** | Overview schematic | — | Conceptual diagram |
-| **Fig 1B** | Phylum barplot | `07_supp_figures.py` | Proteobacteria shift |
-| **Fig 1C** | PICRUSt2 Log₂FC | `08_picrust2_analysis.py` | Nitrifier denitrification −11.5 |
-| **Fig 1D** | Taxon–function heatmap | `09_taxon_function_corr.py` | Rhodanobacter–nitrification link |
-| **Fig 1E** | Co-occurrence network | `10_network_analysis.py` | Hub collapse |
-| **Fig 2A** | FAPROTAX Log₂FC | `15_faprotax_analysis.py` | Nitrification Log₂FC = −10.68 |
-| **Fig 2B** | N-cycle completeness | `26_ncycle_pgp_specificity.py` | Space 73% vs. Terrestrial 100% |
-| **Fig 2C** | Functional redundancy | `22_functional_redundancy.py` | Nitrification 0.20 vs. 4.80 genera |
-| **Fig 2D** | FAPROTAX × network | `17_faprotax_network.py` | Nitrifiers as Terrestrial hubs |
+| **Fig 1a** | Overview schematic | — | Conceptual diagram |
+| **Fig 1b** | Phylum barplot | `07_supp_figures.py` | Proteobacteria shift |
+| **Fig 1c** | PICRUSt2 Log₂FC | `08_picrust2_analysis.py` | Nitrifier denitrification −11.5 |
+| **Fig 2a** | FAPROTAX Log₂FC barplot | `15_faprotax_analysis.py` | Nitrification Log₂FC = −10.68 |
+| **Fig 2b** | N-cycle step presence heatmap | `26_ncycle_pgp_specificity.py` | Space 73% vs. Terrestrial 100% |
+| **Fig 2c** | Functional redundancy barplot | `22_functional_redundancy.py` | Nitrification 0.20 vs. 4.80 genera |
+| **Fig 2d** | βNTI/RCbray pie chart | `16_bnti_rcbray_analysis.R` | Terrestrial 93.2% deterministic vs. Space <0.1% |
+| **Fig 2e** | Taxon–function heatmap | `09_taxon_function_corr.py` | Rhodanobacter–nitrification correlation |
+| **Fig 2f** | Co-occurrence network | `10_network_analysis.py` | Rhodanobacter hub collapse |
 
 ### Supplementary Figures
 
@@ -323,10 +314,7 @@ All files in `version-2_integrated/` unless otherwise noted.
 | **S1** | `13_supp_faith_pd.py` | Faith's PD: Space 10.05 vs. Terrestrial 24.98 |
 | **S2** | `25_permanova.R` | PERMANOVA bootstrap validation (1000 iterations) |
 | **S3** | `14_supp_temporal.py` | Q1–Q4 temporal stability (Faith's PD, Shannon) |
-| **S4** | `16_bnti_rcbray_analysis.R` | βNTI/RCbray distribution: Terrestrial 93.2% deterministic vs. Space <0.1% |
-| **S5** | `21_beta_dispersion.R` | Beta-dispersion: Space 0.574 vs. Terrestrial 0.398 |
-| **S6** | `27_network_threshold_sensitivity.py` | Network metrics across |r| = 0.3/0.4/0.5 |
-| **S7** | `28_temporal_stability.py` | Temporal stability of FAPROTAX metrics (KW p = 0.16–0.30) |
+| **S4** | `27_network_threshold_sensitivity.py` | Network metrics across |r| = 0.3/0.4/0.5 |
 
 ---
 

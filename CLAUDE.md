@@ -4,16 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Context
 
-This is the bioinformatics pipeline for the paper *"Can rhizosphere microbiomes support plants in space? Microbiomic evidence for functional network collapse in ISS-grown Capsicum annuum"* (Kang & Shin, Plant Physiology 2026). The pipeline compares ISS-grown *C. annuum* rhizosphere microbiomes (OSD-772, n=106 Space Flight) against terrestrial soil controls (PRJNA1145089, n=20).
+This is the bioinformatics pipeline for the paper *"Can rhizosphere microbiomes support plants in space? Microbiomic evidence for functional network collapse in ISS-grown Capsicum annuum"* (Kang & Shin, Plant Physiology Letters 2026). The pipeline compares ISS-grown *C. annuum* rhizosphere microbiomes (OSD-772, n=106 Space Flight) against terrestrial soil controls (PRJNA1145089, n=20).
 
-**Current status:** Desk-rejected by Plant Physiology (2026-03) for lacking mechanistic links. See `RESEARCH_NOTES.md` for the post-rejection analysis plan, FAPROTAX results, and resubmission targets.
+**Current status:** Revised submission to Plant Physiology Letters (2026-03). Scripts 15–27 added post-rejection to provide mechanistic links. See `RESEARCH_NOTES.md` for analysis notes.
 
 ---
 
 ## Environment Setup
 
 ```bash
-# Core analysis (QIIME2, Python scripts 06–15)
+# Core analysis (QIIME2, Python scripts 06–27, R scripts via Rscript)
 conda env create -f envs/qiime2-amplicon.yml
 conda activate qiime2-amplicon
 
@@ -24,7 +24,7 @@ conda env create -f envs/picrust2.yml
 conda env create -f envs/pepper-network.yml
 ```
 
-All Python analysis scripts (06–15) run in the `qiime2-amplicon` environment unless noted.
+All Python scripts (06–27) and R scripts (16, 19, 21, 25) run in the `qiime2-amplicon` environment unless noted.
 
 ---
 
@@ -38,14 +38,18 @@ python config.py
 
 # Quick-start: reproduce all figures from pre-processed data (no QIIME2 needed)
 python download_processed_data.py   # downloads version-2_integrated/ from Zenodo
-python 06_plot_depth.py             # Supp Fig 5
-python 07_supp_figures.py           # Fig 1B + QC figures
-python 08_picrust2_analysis.py      # Fig 1C
-python 09_taxon_function_corr.py    # Fig 1D
-python 10_network_analysis.py       # Fig 1E + keystone CSV
+python 07_supp_figures.py           # Fig 1b
+python 08_picrust2_analysis.py      # Fig 1c
+python 09_taxon_function_corr.py    # Fig 2e
+python 10_network_analysis.py       # Fig 2f
 python 13_supp_faith_pd.py          # Supp Fig S1
-python 14_supp_temporal.py          # Supp Fig S2
-python 15_faprotax_analysis.py      # FAPROTAX functional trait analysis
+python 14_supp_temporal.py          # Supp Fig S3
+python 15_faprotax_analysis.py      # Fig 2a
+Rscript 16_bnti_rcbray_analysis.R   # Fig 2d
+python 22_functional_redundancy.py  # Fig 2c
+Rscript 25_permanova.R              # Supp Fig S2
+python 26_ncycle_pgp_specificity.py # Fig 2b
+python 27_network_threshold_sensitivity.py  # Supp Fig S4
 
 # Full pipeline (requires raw FASTQ downloads first)
 bash 05_qiime2_pipeline.sh          # run after conda activate qiime2-amplicon
@@ -64,8 +68,8 @@ Raw FASTQs (OSD-772 + PRJNA1145089)
   → 00–04: metadata prep, manifest, ID sync
   → 05: QIIME2 (DADA2 denoising, SILVA taxonomy, diversity metrics)
   → version-2_integrated/   ← all intermediate TSVs live here
-  → 06–15: figure-generating Python scripts
-  → results/ and version-2_integrated/ ← output PNGs/PDFs/CSVs
+  → 06–27: figure-generating Python/R scripts
+  → version-2_integrated/ ← output PNGs/PDFs/CSVs
 ```
 
 ### Central Configuration: `config.py`
@@ -83,7 +87,7 @@ Key parameters in `config.py`:
 - `DIVERSITY_PARAMS` — rarefaction depth 1,000 reads (~86% sample retention)
 - `PICRUST2_PARAMS` — pathway filtering thresholds
 
-Scripts 00–07 and 11–15 use hardcoded relative paths rather than `config.py`.
+Scripts 00–07 and 11–16 use hardcoded relative paths rather than `config.py`. Scripts 17–27 import `config` for centralized paths.
 
 ### Sample Groups
 
@@ -102,15 +106,20 @@ The integrated dataset has three groups, but **only `Space_Flight` vs. `Terrestr
 
 ### Figure–Script Mapping
 
-| Figure | Script |
-|--------|--------|
-| Fig 1B (taxa barplot) | `07_supp_figures.py` |
-| Fig 1C (PICRUSt2 Log₂FC) | `08_picrust2_analysis.py` |
-| Fig 1D (taxon–function heatmap) | `09_taxon_function_corr.py` |
-| Fig 1E (co-occurrence network) | `10_network_analysis.py` |
-| Supp Fig S1 (Faith's PD) | `13_supp_faith_pd.py` |
-| Supp Fig S2 (temporal Q1–Q4) | `14_supp_temporal.py` |
-| FAPROTAX (new, post-rejection) | `15_faprotax_analysis.py` |
+| Figure | Script | Output file |
+|--------|--------|-------------|
+| Fig 1b (taxa barplot) | `07_supp_figures.py` | `Main_Fig1B_Taxa_Barplot.png/.pdf` |
+| Fig 1c (PICRUSt2 Log₂FC) | `08_picrust2_analysis.py` | `Main_Fig1C_Functional_Pathways.png/.pdf` |
+| Fig 2a (FAPROTAX Log₂FC) | `15_faprotax_analysis.py` | `Main_Fig2a_FAPROTAX_Log2FC.png/.pdf` |
+| Fig 2b (N-cycle completeness) | `26_ncycle_pgp_specificity.py` | `Main_Fig2b_NCycle_PGP.png/.pdf` |
+| Fig 2c (functional redundancy) | `22_functional_redundancy.py` | `Main_Fig2c_FunctionalRedundancy.png/.pdf` |
+| Fig 2d (βNTI/RCbray pie chart) | `16_bnti_rcbray_analysis.R` | `Main_Fig2d_BNTI_RCbray.png/.pdf` |
+| Fig 2e (taxon–function heatmap) | `09_taxon_function_corr.py` | `Main_Fig2E_Taxon_Function_Correlation.png/.pdf` |
+| Fig 2f (co-occurrence network) | `10_network_analysis.py` | `Main_Fig2F_Network.png/.pdf` |
+| Supp Fig S1 (Faith's PD) | `13_supp_faith_pd.py` | `Supp_S1_FaithPD.png/.pdf` |
+| Supp Fig S2 (PERMANOVA bootstrap) | `25_permanova.R` | `Supp_S2_PERMANOVA.png/.pdf` |
+| Supp Fig S3 (temporal Q1–Q4) | `14_supp_temporal.py` | `Supp_S3_Temporal_Q1_Q4.png/.pdf` |
+| Supp Fig S4 (network sensitivity) | `27_network_threshold_sensitivity.py` | `Supp_S4_NetworkSensitivity.png/.pdf` |
 
 ### External Dependencies
 

@@ -365,7 +365,7 @@ def plot_results(ncycle_df, pgp_df, meta):
     )
 
     for ext in ['png', 'pdf']:
-        out = OUTPUT_DIR / f'Main_Fig_NCycle_PGP.{ext}'
+        out = OUTPUT_DIR / f'Main_Fig2b_NCycle_PGP.{ext}'
         fig.savefig(out, dpi=300 if ext == 'png' else None, bbox_inches='tight')
         print(f'  Saved: {out.name}')
     plt.close()

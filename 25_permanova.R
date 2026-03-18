@@ -236,11 +236,11 @@ if (requireNamespace("patchwork", quietly = TRUE)) {
   fig <- p1
 }
 
-ggsave(file.path(WORKDIR, "Main_Fig_PERMANOVA.png"), fig,
+ggsave(file.path(WORKDIR, "Supp_S2_PERMANOVA.png"), fig,
        width = 10, height = 5, dpi = 300)
-ggsave(file.path(WORKDIR, "Main_Fig_PERMANOVA.pdf"), fig,
+ggsave(file.path(WORKDIR, "Supp_S2_PERMANOVA.pdf"), fig,
        width = 10, height = 5)
-cat("  Saved: Main_Fig_PERMANOVA.png/.pdf\n")
+cat("  Saved: Supp_S2_PERMANOVA.png/.pdf\n")
 
 cat("\n--- Summary ---\n")
 print(perm_df, row.names = FALSE)

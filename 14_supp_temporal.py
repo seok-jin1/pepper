@@ -245,7 +245,7 @@ def main():
     )
 
     for fmt in ("pdf", "png"):
-        path = f"{OUTDIR}/FigS2_Temporal_Q1_Q4.{fmt}"
+        path = f"{OUTDIR}/Supp_S3_Temporal_Q1_Q4.{fmt}"
         fig.savefig(path, dpi=300, bbox_inches="tight")
         print(f"Saved: {path}")
 

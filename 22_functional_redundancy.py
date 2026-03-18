@@ -278,7 +278,7 @@ def plot_redundancy(redund_df, meta, summary_df, functions):
     )
 
     for ext in ['png', 'pdf']:
-        out = OUTPUT_DIR / f'Main_Fig_FunctionalRedundancy.{ext}'
+        out = OUTPUT_DIR / f'Main_Fig2c_FunctionalRedundancy.{ext}'
         fig.savefig(out, dpi=300 if ext == 'png' else None, bbox_inches='tight')
         print(f'  Saved: {out.name}')
     plt.close()

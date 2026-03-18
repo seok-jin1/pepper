@@ -274,7 +274,7 @@ if __name__ == '__main__':
     )
 
     for ext in ['png', 'pdf']:
-        out = OUTPUT_DIR / f'Main_Fig_NetworkSensitivity.{ext}'
+        out = OUTPUT_DIR / f'Supp_S4_NetworkSensitivity.{ext}'
         fig.savefig(out, dpi=300 if ext == 'png' else None, bbox_inches='tight')
         print(f'  Saved: {out.name}')
     plt.close()

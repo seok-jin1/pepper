@@ -233,10 +233,10 @@ p <- ggplot(plot_data, aes(x = bnti, fill = pair_type)) +
   theme_bw(base_size = 13) +
   theme(legend.position = "top")
 
-ggsave(file.path(WORKDIR, "BNTI_RCbray_plot.png"), p, width = 10, height = 6, dpi = 300)
-ggsave(file.path(WORKDIR, "BNTI_RCbray_plot.pdf"), p, width = 10, height = 6)
-cat("  Saved: BNTI_RCbray_plot.png\n")
-cat("  Saved: BNTI_RCbray_plot.pdf\n")
+ggsave(file.path(WORKDIR, "Main_Fig2d_BNTI_RCbray.png"), p, width = 10, height = 6, dpi = 300)
+ggsave(file.path(WORKDIR, "Main_Fig2d_BNTI_RCbray.pdf"), p, width = 10, height = 6)
+cat("  Saved: Main_Fig2d_BNTI_RCbray.png\n")
+cat("  Saved: Main_Fig2d_BNTI_RCbray.pdf\n")
 
 cat("\n============================================================\n")
 cat("βNTI + RCbray analysis complete.\n")
