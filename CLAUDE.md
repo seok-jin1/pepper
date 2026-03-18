@@ -45,7 +45,7 @@ python 10_network_analysis.py       # Fig 2f
 python 13_supp_faith_pd.py          # Supp Fig S1
 python 14_supp_temporal.py          # Supp Fig S3
 python 15_faprotax_analysis.py      # Fig 2a
-Rscript 16_bnti_rcbray_analysis.R   # Fig 2d
+Rscript 16_bnti_rcbray_analysis.R   # Supp Fig S4
 python 22_functional_redundancy.py  # Fig 2c
 Rscript 25_permanova.R              # Supp Fig S2
 python 26_ncycle_pgp_specificity.py # Fig 2b
@@ -113,13 +113,13 @@ The integrated dataset has three groups, but **only `Space_Flight` vs. `Terrestr
 | Fig 2a (FAPROTAX Log₂FC) | `15_faprotax_analysis.py` | `Main_Fig2a_FAPROTAX_Log2FC.png/.pdf` |
 | Fig 2b (N-cycle completeness) | `26_ncycle_pgp_specificity.py` | `Main_Fig2b_NCycle_PGP.png/.pdf` |
 | Fig 2c (functional redundancy) | `22_functional_redundancy.py` | `Main_Fig2c_FunctionalRedundancy.png/.pdf` |
-| Fig 2d (βNTI/RCbray pie chart) | `16_bnti_rcbray_analysis.R` | `Main_Fig2d_BNTI_RCbray.png/.pdf` |
-| Fig 2e (taxon–function heatmap) | `09_taxon_function_corr.py` | `Main_Fig2E_Taxon_Function_Correlation.png/.pdf` |
-| Fig 2f (co-occurrence network) | `10_network_analysis.py` | `Main_Fig2F_Network.png/.pdf` |
+| Fig 2d (taxon–function heatmap) | `09_taxon_function_corr.py` | `Main_Fig2D_Taxon_Function_Correlation.png/.pdf` |
+| Fig 2e (co-occurrence network) | `10_network_analysis.py` | `Main_Fig2E_Network.png/.pdf` |
 | Supp Fig S1 (Faith's PD) | `13_supp_faith_pd.py` | `Supp_S1_FaithPD.png/.pdf` |
 | Supp Fig S2 (PERMANOVA bootstrap) | `25_permanova.R` | `Supp_S2_PERMANOVA.png/.pdf` |
 | Supp Fig S3 (temporal Q1–Q4) | `14_supp_temporal.py` | `Supp_S3_Temporal_Q1_Q4.png/.pdf` |
-| Supp Fig S4 (network sensitivity) | `27_network_threshold_sensitivity.py` | `Supp_S4_NetworkSensitivity.png/.pdf` |
+| Supp Fig S4 (βNTI/RCbray) | `16_bnti_rcbray_analysis.R` | `Supp_S4_BNTI_RCbray.png/.pdf` |
+| Supp Fig S5 (network sensitivity) | `27_network_threshold_sensitivity.py` | `Supp_S5_NetworkSensitivity.png/.pdf` |
 
 ### External Dependencies
 

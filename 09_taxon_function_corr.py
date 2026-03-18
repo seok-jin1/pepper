@@ -128,11 +128,11 @@ def plot_heatmap(corr_df):
     plt.tight_layout()
 
     # Save using config path (Phase 2)
-    fig_path = config.get_figure_path("Main", "2E", "Taxon_Function_Correlation")
+    fig_path = config.get_figure_path("Main", "2D", "Taxon_Function_Correlation")
     plt.savefig(fig_path, dpi=300)
     manuscript_dir = config.BASE_DIR / "manuscript_figures"
     manuscript_dir.mkdir(exist_ok=True)
-    plt.savefig(manuscript_dir / "Fig2E_Taxon_Function_Correlation.pdf")
+    plt.savefig(manuscript_dir / "Fig2D_Taxon_Function_Correlation.pdf")
     print(f"✅ Figure saved to: {fig_path}")
     plt.close()
 

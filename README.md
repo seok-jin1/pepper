@@ -66,15 +66,15 @@ This repository contains the complete bioinformatics pipeline used in the study.
 ├── 06_plot_depth.py                  # Sequencing depth → rarefaction threshold
 ├── 07_supp_figures.py                # → Main_Fig1B_Taxa_Barplot.png/.pdf
 ├── 08_picrust2_analysis.py           # → Main_Fig1C_Functional_Pathways.png/.pdf
-├── 09_taxon_function_corr.py         # → Main_Fig2E_Taxon_Function_Correlation.png/.pdf
-├── 10_network_analysis.py            # → Main_Fig2F_Network.png/.pdf
+├── 09_taxon_function_corr.py         # → Main_Fig2D_Taxon_Function_Correlation.png/.pdf
+├── 10_network_analysis.py            # → Main_Fig2E_Network.png/.pdf
 ├── 13_supp_faith_pd.py               # → Supp_S1_FaithPD.png/.pdf  [Supp Fig S1]
 ├── 14_supp_temporal.py               # → Supp_S3_Temporal_Q1_Q4.png/.pdf  [Supp Fig S3]
 │
 │   ── Post-rejection mechanistic analyses (Scripts 15–27) ──────────────────
 │
 ├── 15_faprotax_analysis.py           # → Main_Fig2a_FAPROTAX_Log2FC.png/.pdf  [Fig 2a]
-├── 16_bnti_rcbray_analysis.R         # → Main_Fig2d_BNTI_RCbray.png/.pdf  [Fig 2d]
+├── 16_bnti_rcbray_analysis.R         # → Supp_S4_BNTI_RCbray.png/.pdf  [Supp Fig S4]
 ├── 17_faprotax_network.py            # FAPROTAX × network hub cross-reference (supporting)
 ├── 18_ancombc_plot.py                # ANCOM-BC differential abundance (supporting)
 ├── 19_indval.R                       # IndVal indicator species (supporting)
@@ -85,7 +85,7 @@ This repository contains the complete bioinformatics pipeline used in the study.
 ├── 24_sample_filter_sensitivity.py   # Sample filter sensitivity (supporting)
 ├── 25_permanova.R                    # → Supp_S2_PERMANOVA.png/.pdf  [Supp Fig S2]
 ├── 26_ncycle_pgp_specificity.py      # → Main_Fig2b_NCycle_PGP.png/.pdf  [Fig 2b]
-├── 27_network_threshold_sensitivity.py # → Supp_S4_NetworkSensitivity.png/.pdf  [Supp Fig S4]
+├── 27_network_threshold_sensitivity.py # → Supp_S5_NetworkSensitivity.png/.pdf  [Supp Fig S5]
 │
 └── version-2_integrated/             # All intermediate TSVs, CSVs, and figures
 ```
@@ -276,9 +276,8 @@ All files in `version-2_integrated/` unless otherwise noted.
 | **Fig 2a** | `15_faprotax_analysis.py` | `Main_Fig2a_FAPROTAX_Log2FC.png/.pdf` | `FAPROTAX_functional_table.tsv`<br>`FAPROTAX_group_comparison.csv`<br>`FAPROTAX_key_functions.csv`<br>`FAPROTAX_report.txt` |
 | **Fig 2b** | `26_ncycle_pgp_specificity.py` | `Main_Fig2b_NCycle_PGP.png/.pdf` | `NCycle_Completeness_Results.csv`<br>`NCycle_Completeness_Summary.csv`<br>`PGP_Specificity_Results.csv` |
 | **Fig 2c** | `22_functional_redundancy.py` | `Main_Fig2c_FunctionalRedundancy.png/.pdf` | `Functional_Redundancy_Results.csv`<br>`Functional_Redundancy_Summary.csv` |
-| **Fig 2d** | `16_bnti_rcbray_analysis.R` | `Main_Fig2d_BNTI_RCbray.png/.pdf` | `BNTI_RCbray_results.csv`<br>`BNTI_RCbray_summary.csv` |
-| **Fig 2e** | `09_taxon_function_corr.py` | `Main_Fig2E_Taxon_Function_Correlation.png/.pdf` | — |
-| **Fig 2f** | `10_network_analysis.py` | `Main_Fig2F_Network.png/.pdf` | `Network_Keystone_Genera.csv` |
+| **Fig 2d** | `09_taxon_function_corr.py` | `Main_Fig2D_Taxon_Function_Correlation.png/.pdf` | — |
+| **Fig 2e** | `10_network_analysis.py` | `Main_Fig2E_Network.png/.pdf` | `Network_Keystone_Genera.csv` |
 
 ### Supplementary Figures
 
@@ -287,7 +286,8 @@ All files in `version-2_integrated/` unless otherwise noted.
 | **S1** | `13_supp_faith_pd.py` | `Supp_S1_FaithPD.png/.pdf` | — |
 | **S2** | `25_permanova.R` | `Supp_S2_PERMANOVA.png/.pdf` | `PERMANOVA_results.csv`<br>`PERMANOVA_subsampling.csv` |
 | **S3** | `14_supp_temporal.py` | `Supp_S3_Temporal_Q1_Q4.png/.pdf` | — |
-| **S4** | `27_network_threshold_sensitivity.py` | `Supp_S4_NetworkSensitivity.png/.pdf` | `NetworkSensitivity_Results.csv` |
+| **S4** | `16_bnti_rcbray_analysis.R` | `Supp_S4_BNTI_RCbray.png/.pdf` | `BNTI_RCbray_results.csv`<br>`BNTI_RCbray_summary.csv` |
+| **S5** | `27_network_threshold_sensitivity.py` | `Supp_S5_NetworkSensitivity.png/.pdf` | `NetworkSensitivity_Results.csv` |
 
 ---
 
@@ -303,9 +303,8 @@ All files in `version-2_integrated/` unless otherwise noted.
 | **Fig 2a** | FAPROTAX Log₂FC barplot | `15_faprotax_analysis.py` | Nitrification Log₂FC = −10.68 |
 | **Fig 2b** | N-cycle step presence heatmap | `26_ncycle_pgp_specificity.py` | Space 73% vs. Terrestrial 100% |
 | **Fig 2c** | Functional redundancy barplot | `22_functional_redundancy.py` | Nitrification 0.20 vs. 4.80 genera |
-| **Fig 2d** | βNTI/RCbray pie chart | `16_bnti_rcbray_analysis.R` | Terrestrial 93.2% deterministic vs. Space <0.1% |
-| **Fig 2e** | Taxon–function heatmap | `09_taxon_function_corr.py` | Rhodanobacter–nitrification correlation |
-| **Fig 2f** | Co-occurrence network | `10_network_analysis.py` | Rhodanobacter hub collapse |
+| **Fig 2d** | Taxon–function heatmap | `09_taxon_function_corr.py` | Rhodanobacter–nitrification correlation |
+| **Fig 2e** | Co-occurrence network | `10_network_analysis.py` | Rhodanobacter hub collapse |
 
 ### Supplementary Figures
 
@@ -314,7 +313,8 @@ All files in `version-2_integrated/` unless otherwise noted.
 | **S1** | `13_supp_faith_pd.py` | Faith's PD: Space 10.05 vs. Terrestrial 24.98 |
 | **S2** | `25_permanova.R` | PERMANOVA bootstrap validation (1000 iterations) |
 | **S3** | `14_supp_temporal.py` | Q1–Q4 temporal stability (Faith's PD, Shannon) |
-| **S4** | `27_network_threshold_sensitivity.py` | Network metrics across |r| = 0.3/0.4/0.5 |
+| **S4** | `16_bnti_rcbray_analysis.R` | βNTI/RCbray distribution: Terrestrial 93.2% deterministic vs. Space <0.1% |
+| **S5** | `27_network_threshold_sensitivity.py` | Network metrics across |r| = 0.3/0.4/0.5 |
 
 ---
 
