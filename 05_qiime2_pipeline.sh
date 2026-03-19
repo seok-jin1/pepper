@@ -68,7 +68,7 @@ qiime feature-classifier classify-sklearn \
   --o-classification "${WORKDIR}/taxonomy.qza"
 
 echo "====================================================="
-echo " Step 3b: Export Raw Table (needed by 07_supp_figures.py)"
+echo " Step 3b: Export Raw Table (needed by 06_supp_figures.py)"
 echo "====================================================="
 # Export the pre-filtering table for plant DNA contamination analysis (Supp Fig 3)
 
@@ -165,18 +165,18 @@ qiime tools export \
   --output-path "${WORKDIR}/exported_denoising_stats"
 
 # Diversity metrics — export all vectors needed by downstream scripts
-# Shannon entropy (needed by 07_supp_figures.py indirectly via metadata)
+# Shannon entropy (needed by 06_supp_figures.py indirectly via metadata)
 qiime tools export \
   --input-path "${WORKDIR}/core-metrics-results/shannon_vector.qza" \
   --output-path "${WORKDIR}/exported_diversity"
 
-# Faith's PD (needed by 13_supp_temporal.py and 14_supp_faith_pd.py)
+# Faith's PD (needed by 10_supp_faith_pd.py and 11_supp_temporal.py)
 qiime tools export \
   --input-path "${WORKDIR}/core-metrics-results/faith_pd_vector.qza" \
   --output-path "${WORKDIR}/exported_diversity"
 # Exports as: exported_diversity/alpha-diversity.tsv
 
-# Bray-Curtis PCoA ordination (needed by 13_supp_temporal.py)
+# Bray-Curtis PCoA ordination (needed by 11_supp_temporal.py)
 qiime tools export \
   --input-path "${WORKDIR}/core-metrics-results/bray_curtis_pcoa_results.qza" \
   --output-path "${WORKDIR}/exported_diversity"
@@ -240,5 +240,5 @@ echo "After PICRUSt2 completes, proceed with Python analysis scripts."
 
 echo "====================================================="
 echo " QIIME2 Pipeline Complete!"
-echo " Next: python 06_plot_depth.py"
+echo " Next: python 06_supp_figures.py"
 echo "====================================================="

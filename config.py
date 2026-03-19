@@ -92,10 +92,10 @@ PICRUST2_PATH_DESC = PICRUST2_DIR / "pathways_out" / "path_abun_descriptions.tsv
 # ============================================================================
 
 # Main figures
-MAIN_FIG_PREFIX = VERSION_DIR / "Main_Fig"
+MAIN_FIG_PREFIX = VERSION_DIR / "Fig"
 
 # Supplementary figures
-SUPP_FIG_PREFIX = VERSION_DIR / "Supp_Fig"
+SUPP_FIG_PREFIX = VERSION_DIR / "SuppS"
 
 # Network visualizations
 NETWORK_PREFIX = VERSION_DIR / "Network"

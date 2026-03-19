@@ -1,6 +1,0 @@
-Quarter,Group,n,Nitri_Mean,Nitri_SE,NC_Mean,NC_SE,Shannon_Mean,Shannon_SE
-Q1,Space_Flight,26,0.0013,0.0009,0.7308,0.0414,2.1002,0.1587
-Q2,Space_Flight,23,0.0185,0.0083,0.8348,0.0299,2.1595,0.136
-Q3,Space_Flight,27,0.0034,0.0023,0.6963,0.0405,1.8736,0.135
-Q4,Space_Flight,27,0.0083,0.0067,0.6889,0.0343,2.1392,0.1294
-Terrestrial,Terrestrial_Soil,20,3.082,0.3071,1.0,0.0,3.6785,0.1235
